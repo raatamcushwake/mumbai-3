@@ -1,0 +1,3444 @@
+{
+  "type": "FeatureCollection",
+  "generator": "overpass-turbo",
+  "copyright": "The data included in this document is from www.openstreetmap.org. The data is made available under ODbL.",
+  "timestamp": "2026-05-26T11:52:29Z",
+  "features": [
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/152203345",
+        "bridge": "yes",
+        "highway": "motorway",
+        "layer": "1",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8118512,
+            19.0159542
+          ],
+          [
+            72.8123075,
+            19.0176711
+          ]
+        ]
+      },
+      "id": "way/152203345"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/289540746",
+        "bridge": "yes",
+        "highway": "motorway",
+        "layer": "1",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8124323,
+            19.0169256
+          ],
+          [
+            72.8123174,
+            19.0167651
+          ],
+          [
+            72.8122998,
+            19.0167001
+          ],
+          [
+            72.812075,
+            19.0158736
+          ]
+        ]
+      },
+      "id": "way/289540746"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655130",
+        "bus:lanes": "designated|yes|yes",
+        "foot": "no",
+        "hgv": "no",
+        "highway": "motorway",
+        "lanes": "3",
+        "lanes:bus": "1",
+        "layer": "-1",
+        "lit": "yes",
+        "maxheight": "5",
+        "maxspeed": "60",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt",
+        "tunnel": "yes"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8209953,
+            18.9468531
+          ],
+          [
+            72.8206073,
+            18.9474236
+          ],
+          [
+            72.8195594,
+            18.948742
+          ],
+          [
+            72.8186923,
+            18.9497075
+          ],
+          [
+            72.8183763,
+            18.9500725
+          ],
+          [
+            72.8177476,
+            18.950692
+          ],
+          [
+            72.8168282,
+            18.9514249
+          ],
+          [
+            72.8163897,
+            18.9517454
+          ],
+          [
+            72.8160155,
+            18.9519558
+          ],
+          [
+            72.8146809,
+            18.9527223
+          ],
+          [
+            72.8138087,
+            18.9531734
+          ],
+          [
+            72.8132752,
+            18.9534117
+          ],
+          [
+            72.8097405,
+            18.9548207
+          ],
+          [
+            72.8016444,
+            18.9576009
+          ],
+          [
+            72.8011695,
+            18.9578287
+          ],
+          [
+            72.8006923,
+            18.9581103
+          ],
+          [
+            72.800103,
+            18.9585443
+          ],
+          [
+            72.7997096,
+            18.9589834
+          ],
+          [
+            72.7993906,
+            18.9595605
+          ],
+          [
+            72.7992211,
+            18.9599657
+          ],
+          [
+            72.7991028,
+            18.9605802
+          ],
+          [
+            72.7990713,
+            18.9610745
+          ],
+          [
+            72.7990897,
+            18.9613825
+          ],
+          [
+            72.7992058,
+            18.9618418
+          ],
+          [
+            72.7994335,
+            18.9627863
+          ]
+        ]
+      },
+      "id": "way/625655130"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655176",
+        "bridge": "yes",
+        "bus:lanes": "designated|yes|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "layer": "1",
+        "lit": "yes",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8117348,
+            18.9936787
+          ],
+          [
+            72.811718,
+            18.9931984
+          ],
+          [
+            72.8116591,
+            18.9926447
+          ],
+          [
+            72.811596,
+            18.9922979
+          ]
+        ]
+      },
+      "id": "way/625655176"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655177",
+        "bridge": "yes",
+        "bus:lanes": "designated|yes|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "layer": "1",
+        "lit": "yes",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8113376,
+            18.9923406
+          ],
+          [
+            72.8114046,
+            18.992747
+          ],
+          [
+            72.8114414,
+            18.9931547
+          ],
+          [
+            72.8114733,
+            18.9936791
+          ]
+        ]
+      },
+      "id": "way/625655177"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655178",
+        "bus:lanes": "designated|yes|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "lit": "yes",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8114733,
+            18.9936791
+          ],
+          [
+            72.8114927,
+            18.9945784
+          ],
+          [
+            72.8113639,
+            18.9954204
+          ],
+          [
+            72.8110957,
+            18.9965465
+          ],
+          [
+            72.8109133,
+            18.9972566
+          ],
+          [
+            72.8106129,
+            18.9984131
+          ],
+          [
+            72.8105593,
+            18.9992348
+          ],
+          [
+            72.8105378,
+            19.0001173
+          ],
+          [
+            72.8106773,
+            19.001223
+          ],
+          [
+            72.810924,
+            19.0022882
+          ],
+          [
+            72.8111008,
+            19.0027666
+          ],
+          [
+            72.8112352,
+            19.0031301
+          ],
+          [
+            72.8115208,
+            19.0036886
+          ]
+        ]
+      },
+      "id": "way/625655178"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655179",
+        "bus:lanes": "designated|yes|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "lit": "yes",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8129061,
+            19.0094743
+          ],
+          [
+            72.8130458,
+            19.0090894
+          ],
+          [
+            72.8131218,
+            19.008738
+          ],
+          [
+            72.813154,
+            19.0084232
+          ],
+          [
+            72.8132152,
+            19.0081014
+          ],
+          [
+            72.8131572,
+            19.0070482
+          ],
+          [
+            72.8130118,
+            19.0064472
+          ],
+          [
+            72.8127975,
+            19.0058758
+          ],
+          [
+            72.8115034,
+            19.0031048
+          ],
+          [
+            72.8112084,
+            19.0022425
+          ],
+          [
+            72.8109348,
+            19.001218
+          ],
+          [
+            72.8107953,
+            19.0001427
+          ],
+          [
+            72.8108168,
+            18.9992601
+          ],
+          [
+            72.8108919,
+            18.9984536
+          ],
+          [
+            72.8111386,
+            18.9973022
+          ],
+          [
+            72.8113478,
+            18.9966175
+          ],
+          [
+            72.8116375,
+            18.9954509
+          ],
+          [
+            72.8117502,
+            18.9945886
+          ],
+          [
+            72.8117348,
+            18.9936787
+          ]
+        ]
+      },
+      "id": "way/625655179"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655183",
+        "highway": "motorway_link",
+        "lit": "yes",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8123876,
+            19.0068109
+          ],
+          [
+            72.8124205,
+            19.006833
+          ],
+          [
+            72.8125701,
+            19.0069337
+          ],
+          [
+            72.8127369,
+            19.007156
+          ],
+          [
+            72.8127855,
+            19.0073957
+          ],
+          [
+            72.8128016,
+            19.0077457
+          ],
+          [
+            72.8127701,
+            19.0083238
+          ],
+          [
+            72.8127142,
+            19.0087556
+          ],
+          [
+            72.8127544,
+            19.0091454
+          ]
+        ]
+      },
+      "id": "way/625655183"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655187",
+        "bridge": "yes",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "layer": "1",
+        "lit": "yes",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8133587,
+            19.0051545
+          ],
+          [
+            72.8134576,
+            19.0054402
+          ],
+          [
+            72.8136538,
+            19.0061141
+          ],
+          [
+            72.8138371,
+            19.0066934
+          ],
+          [
+            72.8139663,
+            19.0071526
+          ],
+          [
+            72.8139645,
+            19.0073908
+          ],
+          [
+            72.8139002,
+            19.007621
+          ],
+          [
+            72.8138053,
+            19.0077618
+          ],
+          [
+            72.8136287,
+            19.0078871
+          ],
+          [
+            72.8134193,
+            19.0079545
+          ],
+          [
+            72.8130321,
+            19.0080063
+          ],
+          [
+            72.8125275,
+            19.0080638
+          ],
+          [
+            72.8121134,
+            19.0081052
+          ],
+          [
+            72.8118875,
+            19.0080807
+          ],
+          [
+            72.8116845,
+            19.0079829
+          ],
+          [
+            72.8115317,
+            19.007822
+          ],
+          [
+            72.8114305,
+            19.0076527
+          ],
+          [
+            72.8113967,
+            19.0074164
+          ],
+          [
+            72.8114335,
+            19.0071877
+          ],
+          [
+            72.8115274,
+            19.0070223
+          ],
+          [
+            72.8116721,
+            19.0068716
+          ],
+          [
+            72.8119111,
+            19.0067648
+          ],
+          [
+            72.8121701,
+            19.0067356
+          ],
+          [
+            72.8123876,
+            19.0068109
+          ]
+        ]
+      },
+      "id": "way/625655187"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655188",
+        "bridge": "yes",
+        "destination": "Dadar",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "layer": "1",
+        "lit": "yes",
+        "maxspeed": "40",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8118745,
+            19.008368
+          ],
+          [
+            72.811991,
+            19.0084358
+          ],
+          [
+            72.812156,
+            19.0084601
+          ],
+          [
+            72.8124996,
+            19.0084711
+          ],
+          [
+            72.8129704,
+            19.0085328
+          ],
+          [
+            72.8135701,
+            19.0087152
+          ],
+          [
+            72.8139394,
+            19.0088595
+          ],
+          [
+            72.8143376,
+            19.0090606
+          ],
+          [
+            72.8146385,
+            19.009259
+          ],
+          [
+            72.8150241,
+            19.0095853
+          ]
+        ]
+      },
+      "id": "way/625655188"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655189",
+        "bridge": "yes",
+        "highway": "motorway",
+        "layer": "1",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.812075,
+            19.0158736
+          ],
+          [
+            72.8116799,
+            19.0145782
+          ],
+          [
+            72.8114605,
+            19.013383
+          ],
+          [
+            72.8115302,
+            19.0130137
+          ],
+          [
+            72.8116183,
+            19.0121801
+          ],
+          [
+            72.8118437,
+            19.0114992
+          ],
+          [
+            72.812197,
+            19.0107952
+          ],
+          [
+            72.8125586,
+            19.0101489
+          ],
+          [
+            72.8129061,
+            19.0094743
+          ]
+        ]
+      },
+      "id": "way/625655189"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655190",
+        "bridge": "yes",
+        "highway": "motorway",
+        "layer": "1",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8126691,
+            19.009347
+          ],
+          [
+            72.8124048,
+            19.0098923
+          ],
+          [
+            72.8119727,
+            19.0107123
+          ],
+          [
+            72.811601,
+            19.0114223
+          ],
+          [
+            72.8113739,
+            19.0121185
+          ],
+          [
+            72.8112739,
+            19.012778
+          ],
+          [
+            72.8112153,
+            19.013393
+          ],
+          [
+            72.8112267,
+            19.013835
+          ],
+          [
+            72.8114184,
+            19.0146384
+          ],
+          [
+            72.8118512,
+            19.0159542
+          ]
+        ]
+      },
+      "id": "way/625655190"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655193",
+        "destination": "Nariman Point",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "lit": "yes",
+        "maxspeed": "40",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8150083,
+            19.0101055
+          ],
+          [
+            72.8148829,
+            19.0099389
+          ],
+          [
+            72.8146138,
+            19.0096538
+          ],
+          [
+            72.8143272,
+            19.0094076
+          ],
+          [
+            72.8140678,
+            19.0092443
+          ],
+          [
+            72.8137227,
+            19.0090599
+          ],
+          [
+            72.8135832,
+            19.008964
+          ],
+          [
+            72.8134744,
+            19.0088415
+          ],
+          [
+            72.8133951,
+            19.0086985
+          ],
+          [
+            72.8133219,
+            19.0085521
+          ],
+          [
+            72.8132683,
+            19.0083999
+          ],
+          [
+            72.8132997,
+            19.0081381
+          ],
+          [
+            72.8133105,
+            19.0077886
+          ]
+        ]
+      },
+      "id": "way/625655193"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625655195",
+        "bridge": "yes",
+        "destination": "Sea Link",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "layer": "2",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8150083,
+            19.0101055
+          ],
+          [
+            72.814766,
+            19.0100137
+          ],
+          [
+            72.8145637,
+            19.009927
+          ],
+          [
+            72.814223,
+            19.0098615
+          ],
+          [
+            72.8138468,
+            19.0098788
+          ],
+          [
+            72.8134657,
+            19.0100203
+          ],
+          [
+            72.8127713,
+            19.0103042
+          ],
+          [
+            72.8121731,
+            19.0105685
+          ],
+          [
+            72.8117243,
+            19.0107359
+          ],
+          [
+            72.8113349,
+            19.0110003
+          ],
+          [
+            72.8110323,
+            19.0114225
+          ],
+          [
+            72.8109457,
+            19.0117291
+          ],
+          [
+            72.8109193,
+            19.0120392
+          ],
+          [
+            72.8109556,
+            19.0123606
+          ],
+          [
+            72.8111188,
+            19.013402
+          ],
+          [
+            72.8112267,
+            19.013835
+          ]
+        ]
+      },
+      "id": "way/625655195"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625656749",
+        "bridge": "yes",
+        "check_date": "2024-09-25",
+        "construction": "primary",
+        "highway": "construction",
+        "layer": "1",
+        "name": "Mumbai Coastal Road - Phase II"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8247493,
+            19.1506664
+          ],
+          [
+            72.8227258,
+            19.1485939
+          ],
+          [
+            72.8205264,
+            19.1459892
+          ],
+          [
+            72.8198182,
+            19.1450973
+          ],
+          [
+            72.8193247,
+            19.144327
+          ],
+          [
+            72.8188419,
+            19.1432323
+          ],
+          [
+            72.8185737,
+            19.1423303
+          ],
+          [
+            72.8184342,
+            19.1413978
+          ],
+          [
+            72.8183806,
+            19.1404248
+          ],
+          [
+            72.8183484,
+            19.1392085
+          ],
+          [
+            72.8181124,
+            19.1382253
+          ],
+          [
+            72.8175866,
+            19.1369684
+          ],
+          [
+            72.8172755,
+            19.1360258
+          ],
+          [
+            72.8171455,
+            19.1352673
+          ],
+          [
+            72.8170931,
+            19.1349615
+          ],
+          [
+            72.8170931,
+            19.134181
+          ],
+          [
+            72.8173399,
+            19.1303597
+          ],
+          [
+            72.8176167,
+            19.128673
+          ],
+          [
+            72.8186895,
+            19.1275174
+          ],
+          [
+            72.8189342,
+            19.1270532
+          ],
+          [
+            72.8193468,
+            19.1263244
+          ],
+          [
+            72.819416,
+            19.1259065
+          ],
+          [
+            72.8194462,
+            19.1248722
+          ],
+          [
+            72.8195188,
+            19.1229961
+          ]
+        ]
+      },
+      "id": "way/625656749"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625656756",
+        "bridge": "yes",
+        "check_date": "2025-08-15",
+        "highway": "construction",
+        "layer": "1",
+        "name": "Mumbai Coastal Road - Phase II",
+        "oneway": "no",
+        "proposed": "motorway"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8308904,
+            19.0473121
+          ],
+          [
+            72.8305042,
+            19.0468151
+          ],
+          [
+            72.830193,
+            19.0462776
+          ],
+          [
+            72.8298604,
+            19.0453345
+          ],
+          [
+            72.8293562,
+            19.0445029
+          ],
+          [
+            72.8289485,
+            19.0440668
+          ],
+          [
+            72.8282726,
+            19.0436307
+          ],
+          [
+            72.8228116,
+            19.0410446
+          ],
+          [
+            72.8218031,
+            19.0407302
+          ],
+          [
+            72.8210199,
+            19.0406896
+          ],
+          [
+            72.8201616,
+            19.0407707
+          ],
+          [
+            72.8192496,
+            19.0410851
+          ],
+          [
+            72.8184396,
+            19.0411767
+          ],
+          [
+            72.8178144,
+            19.0413951
+          ],
+          [
+            72.8175563,
+            19.0420996
+          ],
+          [
+            72.8173721,
+            19.0429208
+          ],
+          [
+            72.8171253,
+            19.0435293
+          ],
+          [
+            72.8169429,
+            19.0444116
+          ],
+          [
+            72.817018,
+            19.045375
+          ],
+          [
+            72.8171558,
+            19.0457504
+          ],
+          [
+            72.8173828,
+            19.0463689
+          ],
+          [
+            72.8179943,
+            19.0473222
+          ],
+          [
+            72.8196895,
+            19.0497561
+          ],
+          [
+            72.820183,
+            19.0506689
+          ],
+          [
+            72.8205693,
+            19.0515613
+          ],
+          [
+            72.8208268,
+            19.0524841
+          ],
+          [
+            72.8210628,
+            19.0537619
+          ],
+          [
+            72.8210541,
+            19.0544616
+          ],
+          [
+            72.820977,
+            19.0556684
+          ],
+          [
+            72.8207731,
+            19.0565405
+          ],
+          [
+            72.8201079,
+            19.0588323
+          ],
+          [
+            72.8199577,
+            19.0596436
+          ],
+          [
+            72.8199041,
+            19.0606678
+          ],
+          [
+            72.8199129,
+            19.0609399
+          ],
+          [
+            72.8199255,
+            19.0613319
+          ]
+        ]
+      },
+      "id": "way/625656756"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625656758",
+        "bridge": "yes",
+        "highway": "proposed",
+        "layer": "1",
+        "name": "Mumbai Coastal Road - Phase II",
+        "proposed": "motorway_link"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8282726,
+            19.0436307
+          ],
+          [
+            72.8286695,
+            19.0439857
+          ],
+          [
+            72.8287339,
+            19.0442493
+          ],
+          [
+            72.8287017,
+            19.0445434
+          ],
+          [
+            72.8285408,
+            19.0448477
+          ],
+          [
+            72.8283048,
+            19.0449998
+          ],
+          [
+            72.8279507,
+            19.0450607
+          ],
+          [
+            72.8275859,
+            19.0449592
+          ],
+          [
+            72.8261483,
+            19.0443305
+          ]
+        ]
+      },
+      "id": "way/625656758"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/625656759",
+        "bridge": "yes",
+        "highway": "proposed",
+        "layer": "1",
+        "name": "Mumbai Coastal Road - Phase II"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8287232,
+            19.0467137
+          ],
+          [
+            72.8296888,
+            19.045872
+          ],
+          [
+            72.8297639,
+            19.0455677
+          ],
+          [
+            72.8297531,
+            19.0452331
+          ],
+          [
+            72.8293562,
+            19.0445029
+          ]
+        ]
+      },
+      "id": "way/625656759"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1078682564",
+        "bus:lanes": "designated|yes|yes",
+        "check_date": "2025-07-31",
+        "check_date:surface": "2025-07-31",
+        "foot": "no",
+        "hgv": "no",
+        "highway": "motorway",
+        "lanes": "3",
+        "lanes:bus": "1",
+        "layer": "-1",
+        "maxheight": "5",
+        "maxspeed": "60",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt",
+        "tunnel": "yes"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.79952,
+            18.9600605
+          ],
+          [
+            72.7996711,
+            18.959662
+          ],
+          [
+            72.7999891,
+            18.9590975
+          ],
+          [
+            72.8002792,
+            18.9588221
+          ],
+          [
+            72.8004929,
+            18.9586524
+          ],
+          [
+            72.8008575,
+            18.9584196
+          ],
+          [
+            72.8013894,
+            18.9581436
+          ],
+          [
+            72.8018309,
+            18.9579769
+          ],
+          [
+            72.8029092,
+            18.9576256
+          ],
+          [
+            72.806529,
+            18.9564464
+          ],
+          [
+            72.8094405,
+            18.9554538
+          ],
+          [
+            72.810296,
+            18.9551309
+          ],
+          [
+            72.8119379,
+            18.9544718
+          ],
+          [
+            72.8134206,
+            18.9538389
+          ],
+          [
+            72.8140998,
+            18.9535231
+          ],
+          [
+            72.8148937,
+            18.9530918
+          ],
+          [
+            72.815693,
+            18.9525946
+          ],
+          [
+            72.8164516,
+            18.9520689
+          ],
+          [
+            72.8173273,
+            18.9513878
+          ],
+          [
+            72.8176116,
+            18.9511674
+          ],
+          [
+            72.8188459,
+            18.949986
+          ],
+          [
+            72.8194942,
+            18.9492898
+          ],
+          [
+            72.8201585,
+            18.9484835
+          ],
+          [
+            72.820675,
+            18.9478187
+          ],
+          [
+            72.8220523,
+            18.9458749
+          ]
+        ]
+      },
+      "id": "way/1078682564"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1262140533",
+        "destination": "Nariman Point;Mantralaya",
+        "highway": "motorway",
+        "lanes": "2",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8230518,
+            18.9439553
+          ],
+          [
+            72.8231154,
+            18.943776
+          ],
+          [
+            72.8231038,
+            18.9436016
+          ]
+        ]
+      },
+      "id": "way/1262140533"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1266293266",
+        "bus:lanes": "designated|yes|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "lit": "yes",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.811596,
+            18.9922979
+          ],
+          [
+            72.8114493,
+            18.9916629
+          ],
+          [
+            72.8111699,
+            18.9906743
+          ],
+          [
+            72.8106036,
+            18.9893895
+          ]
+        ]
+      },
+      "id": "way/1266293266"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1266293267",
+        "bus:lanes": "designated|yes|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "lit": "yes",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8103733,
+            18.9894897
+          ],
+          [
+            72.810924,
+            18.9907437
+          ],
+          [
+            72.8112517,
+            18.9919286
+          ],
+          [
+            72.8113376,
+            18.9923406
+          ]
+        ]
+      },
+      "id": "way/1266293267"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1266293268",
+        "bus:lanes": "designated|yes|yes",
+        "check_date": "2025-10-23",
+        "check_date:lit": "2025-10-23",
+        "check_date:surface": "2025-07-31",
+        "foot": "no",
+        "hgv": "no",
+        "highway": "motorway",
+        "lanes": "3",
+        "lanes:bus": "1",
+        "layer": "-1",
+        "lit": "yes",
+        "maxheight": "5",
+        "maxspeed": "60",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt",
+        "tunnel": "yes"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.7996315,
+            18.9627392
+          ],
+          [
+            72.7995412,
+            18.9623762
+          ],
+          [
+            72.7994413,
+            18.9619525
+          ],
+          [
+            72.7993409,
+            18.961364
+          ],
+          [
+            72.7993573,
+            18.9610522
+          ],
+          [
+            72.7994184,
+            18.9606339
+          ],
+          [
+            72.79952,
+            18.9600605
+          ]
+        ]
+      },
+      "id": "way/1266293268"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1303398642",
+        "foot": "no",
+        "hgv": "no",
+        "highway": "motorway",
+        "lanes": "3",
+        "maxheight": "5",
+        "maxspeed": "60",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8232489,
+            18.9428722
+          ],
+          [
+            72.8231375,
+            18.9429167
+          ],
+          [
+            72.8228003,
+            18.9436727
+          ],
+          [
+            72.8221371,
+            18.9450204
+          ],
+          [
+            72.8217668,
+            18.9456876
+          ],
+          [
+            72.8216407,
+            18.9459193
+          ],
+          [
+            72.8209953,
+            18.9468531
+          ]
+        ]
+      },
+      "id": "way/1303398642"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1303476656",
+        "highway": "motorway",
+        "lit": "yes",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8118355,
+            19.0043039
+          ],
+          [
+            72.8125565,
+            19.0058706
+          ],
+          [
+            72.8127875,
+            19.0064666
+          ],
+          [
+            72.8129259,
+            19.0070355
+          ],
+          [
+            72.8129751,
+            19.0074009
+          ],
+          [
+            72.8129848,
+            19.0077722
+          ],
+          [
+            72.8129345,
+            19.0083631
+          ],
+          [
+            72.8127544,
+            19.0091454
+          ],
+          [
+            72.8126691,
+            19.009347
+          ]
+        ]
+      },
+      "id": "way/1303476656"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1356858757",
+        "destination:lanes": "Dadar|Worli",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "lit": "yes",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8118355,
+            19.0043039
+          ],
+          [
+            72.8118461,
+            19.004581
+          ],
+          [
+            72.8119631,
+            19.0049723
+          ],
+          [
+            72.8122638,
+            19.0057173
+          ],
+          [
+            72.8122732,
+            19.0059579
+          ]
+        ]
+      },
+      "id": "way/1356858757"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1356858758",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8132878,
+            19.0045873
+          ],
+          [
+            72.8132776,
+            19.0047316
+          ],
+          [
+            72.8132725,
+            19.0048075
+          ],
+          [
+            72.8132887,
+            19.004881
+          ],
+          [
+            72.8133587,
+            19.0051545
+          ]
+        ]
+      },
+      "id": "way/1356858758"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1356858759",
+        "bridge": "yes",
+        "destination": "Worli",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "layer": "1",
+        "lit": "yes",
+        "maxspeed": "40",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8118745,
+            19.008368
+          ],
+          [
+            72.8120421,
+            19.0083751
+          ],
+          [
+            72.8122048,
+            19.0083759
+          ],
+          [
+            72.812538,
+            19.0083517
+          ],
+          [
+            72.8128647,
+            19.0083065
+          ],
+          [
+            72.813505,
+            19.0082218
+          ],
+          [
+            72.8136385,
+            19.0081887
+          ],
+          [
+            72.8137698,
+            19.0081336
+          ],
+          [
+            72.8138856,
+            19.0080602
+          ],
+          [
+            72.8139853,
+            19.0079715
+          ],
+          [
+            72.8140831,
+            19.0078479
+          ],
+          [
+            72.8141449,
+            19.0077177
+          ],
+          [
+            72.8142071,
+            19.0075275
+          ],
+          [
+            72.8142135,
+            19.0072769
+          ],
+          [
+            72.8141574,
+            19.0069816
+          ],
+          [
+            72.8140306,
+            19.0066139
+          ],
+          [
+            72.8136242,
+            19.0052721
+          ],
+          [
+            72.8136097,
+            19.0049661
+          ]
+        ]
+      },
+      "id": "way/1356858759"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1356858760",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "lit": "yes",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8150241,
+            19.0095853
+          ],
+          [
+            72.8153069,
+            19.0098988
+          ],
+          [
+            72.8156721,
+            19.0104903
+          ],
+          [
+            72.8158791,
+            19.0106791
+          ]
+        ]
+      },
+      "id": "way/1356858760"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1420319724",
+        "bridge": "yes",
+        "destination": "Dadar;Worli",
+        "destination:lanes": "Dadar|Worli",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "layer": "1",
+        "lit": "yes",
+        "maxspeed": "40",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8122732,
+            19.0059579
+          ],
+          [
+            72.8122221,
+            19.0061483
+          ],
+          [
+            72.8120201,
+            19.0064173
+          ],
+          [
+            72.811937,
+            19.0064937
+          ],
+          [
+            72.8115177,
+            19.0067606
+          ],
+          [
+            72.811392,
+            19.0068975
+          ],
+          [
+            72.8112894,
+            19.0070512
+          ],
+          [
+            72.8112065,
+            19.0072681
+          ],
+          [
+            72.8111832,
+            19.0074839
+          ],
+          [
+            72.8112228,
+            19.007698
+          ],
+          [
+            72.811278,
+            19.0078459
+          ],
+          [
+            72.8114322,
+            19.0080814
+          ]
+        ]
+      },
+      "id": "way/1420319724"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1421959435",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "lit": "yes",
+        "maxspeed": "40",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8159987,
+            19.0112809
+          ],
+          [
+            72.8156646,
+            19.010851
+          ],
+          [
+            72.815366,
+            19.0105118
+          ]
+        ]
+      },
+      "id": "way/1421959435"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1424381921",
+        "bus:lanes": "designated|yes|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.7994335,
+            18.9627863
+          ],
+          [
+            72.8004746,
+            18.9667775
+          ],
+          [
+            72.8008365,
+            18.9681557
+          ],
+          [
+            72.8014281,
+            18.9703779
+          ],
+          [
+            72.8015267,
+            18.9707392
+          ],
+          [
+            72.8016222,
+            18.9710714
+          ],
+          [
+            72.8017239,
+            18.9713715
+          ],
+          [
+            72.8018749,
+            18.9717882
+          ],
+          [
+            72.8020474,
+            18.9721932
+          ],
+          [
+            72.8023124,
+            18.9727584
+          ],
+          [
+            72.8025198,
+            18.9731507
+          ],
+          [
+            72.8025382,
+            18.9731864
+          ],
+          [
+            72.8031516,
+            18.9743717
+          ],
+          [
+            72.8042161,
+            18.9764739
+          ],
+          [
+            72.8044489,
+            18.9769311
+          ],
+          [
+            72.8045656,
+            18.977132
+          ],
+          [
+            72.8046612,
+            18.9772957
+          ],
+          [
+            72.8047151,
+            18.9773882
+          ],
+          [
+            72.8048645,
+            18.9776178
+          ],
+          [
+            72.8049513,
+            18.9777269
+          ],
+          [
+            72.8050438,
+            18.9778293
+          ],
+          [
+            72.8052358,
+            18.978044
+          ],
+          [
+            72.8054062,
+            18.978203
+          ],
+          [
+            72.8055587,
+            18.9783331
+          ],
+          [
+            72.805801,
+            18.9785091
+          ],
+          [
+            72.8060866,
+            18.978685
+          ],
+          [
+            72.8064198,
+            18.9788569
+          ],
+          [
+            72.8068092,
+            18.9790042
+          ],
+          [
+            72.8072808,
+            18.9791433
+          ],
+          [
+            72.8080926,
+            18.9793326
+          ],
+          [
+            72.8105288,
+            18.9799129
+          ],
+          [
+            72.8106943,
+            18.9799615
+          ],
+          [
+            72.8109734,
+            18.9800497
+          ],
+          [
+            72.8111796,
+            18.9801289
+          ],
+          [
+            72.8114366,
+            18.9802449
+          ],
+          [
+            72.8116906,
+            18.9803853
+          ],
+          [
+            72.8119139,
+            18.9805383
+          ]
+        ]
+      },
+      "id": "way/1424381921"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1424381922",
+        "bridge": "yes",
+        "bus:lanes": "designated|yes|yes|yes",
+        "check_date": "2025-10-23",
+        "check_date:lit": "2025-10-23",
+        "check_date:surface": "2025-07-31",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "layer": "2",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8124588,
+            18.9852983
+          ],
+          [
+            72.8126947,
+            18.9850528
+          ],
+          [
+            72.8128526,
+            18.9848584
+          ],
+          [
+            72.8129911,
+            18.9846457
+          ],
+          [
+            72.8131274,
+            18.984392
+          ],
+          [
+            72.8132377,
+            18.9841383
+          ],
+          [
+            72.8133095,
+            18.9839269
+          ],
+          [
+            72.8133647,
+            18.9837372
+          ],
+          [
+            72.8134044,
+            18.9835407
+          ],
+          [
+            72.8134277,
+            18.9833684
+          ],
+          [
+            72.8134441,
+            18.9831874
+          ],
+          [
+            72.8134541,
+            18.9829916
+          ],
+          [
+            72.8134513,
+            18.9828333
+          ],
+          [
+            72.8134379,
+            18.9826557
+          ],
+          [
+            72.8134164,
+            18.9824706
+          ],
+          [
+            72.8133816,
+            18.9822956
+          ],
+          [
+            72.8133306,
+            18.9821053
+          ],
+          [
+            72.8132972,
+            18.9820004
+          ],
+          [
+            72.8132034,
+            18.9817619
+          ],
+          [
+            72.8130924,
+            18.9815193
+          ],
+          [
+            72.8129789,
+            18.9813164
+          ],
+          [
+            72.8128728,
+            18.9811578
+          ],
+          [
+            72.8126972,
+            18.9809351
+          ],
+          [
+            72.8125215,
+            18.9807315
+          ],
+          [
+            72.8123232,
+            18.9805466
+          ],
+          [
+            72.8120787,
+            18.9803509
+          ]
+        ]
+      },
+      "id": "way/1424381922"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1424389013",
+        "bridge": "yes",
+        "bus:lanes": "designated|yes|yes|yes",
+        "check_date": "2025-10-23",
+        "check_date:lit": "2025-10-23",
+        "check_date:surface": "2025-07-31",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "layer": "1",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8108347,
+            18.9866244
+          ],
+          [
+            72.8109024,
+            18.9865554
+          ],
+          [
+            72.811095,
+            18.9863754
+          ],
+          [
+            72.8112702,
+            18.9862342
+          ],
+          [
+            72.8116019,
+            18.985987
+          ],
+          [
+            72.8120759,
+            18.9856297
+          ],
+          [
+            72.8122274,
+            18.9855069
+          ],
+          [
+            72.8124588,
+            18.9852983
+          ]
+        ]
+      },
+      "id": "way/1424389013"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1424389015",
+        "bridge": "yes",
+        "bus:lanes": "designated|yes|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "layer": "1",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8131808,
+            18.9834004
+          ],
+          [
+            72.8131355,
+            18.9836259
+          ],
+          [
+            72.8130609,
+            18.9838844
+          ],
+          [
+            72.812964,
+            18.9841335
+          ],
+          [
+            72.8128223,
+            18.9844108
+          ],
+          [
+            72.8126782,
+            18.9846458
+          ],
+          [
+            72.8124454,
+            18.9849456
+          ],
+          [
+            72.8122232,
+            18.9851914
+          ],
+          [
+            72.8119256,
+            18.985455
+          ],
+          [
+            72.811112,
+            18.9860569
+          ],
+          [
+            72.8108521,
+            18.9862742
+          ],
+          [
+            72.8106261,
+            18.9864986
+          ],
+          [
+            72.8104604,
+            18.9867052
+          ],
+          [
+            72.8102871,
+            18.9869759
+          ],
+          [
+            72.8101816,
+            18.987186
+          ],
+          [
+            72.8100761,
+            18.9874639
+          ],
+          [
+            72.8100234,
+            18.9877096
+          ],
+          [
+            72.809997,
+            18.9880088
+          ],
+          [
+            72.8100008,
+            18.9882653
+          ],
+          [
+            72.8100234,
+            18.988511
+          ],
+          [
+            72.8100799,
+            18.9887675
+          ],
+          [
+            72.8101515,
+            18.9889848
+          ],
+          [
+            72.8102419,
+            18.989202
+          ],
+          [
+            72.8103733,
+            18.9894897
+          ]
+        ]
+      },
+      "id": "way/1424389015"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1424389018",
+        "bridge": "yes",
+        "bus:lanes": "designated|yes|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "layer": "2",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8119139,
+            18.9805383
+          ],
+          [
+            72.8120413,
+            18.9806362
+          ],
+          [
+            72.8122076,
+            18.9807783
+          ],
+          [
+            72.8123631,
+            18.9809254
+          ],
+          [
+            72.8125375,
+            18.9811283
+          ],
+          [
+            72.8127387,
+            18.9814098
+          ],
+          [
+            72.8128647,
+            18.9816153
+          ],
+          [
+            72.8129747,
+            18.9818385
+          ],
+          [
+            72.8130565,
+            18.9820484
+          ],
+          [
+            72.8130951,
+            18.9821707
+          ],
+          [
+            72.8131276,
+            18.9822975
+          ],
+          [
+            72.8131581,
+            18.982434
+          ],
+          [
+            72.8131764,
+            18.9825436
+          ],
+          [
+            72.8131964,
+            18.9826886
+          ],
+          [
+            72.8132107,
+            18.9828558
+          ],
+          [
+            72.8132168,
+            18.9830192
+          ],
+          [
+            72.8132066,
+            18.9831903
+          ],
+          [
+            72.8131808,
+            18.9834004
+          ]
+        ]
+      },
+      "id": "way/1424389018"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1424389019",
+        "bus:lanes": "designated|yes|yes|yes",
+        "check_date": "2025-10-23",
+        "check_date:lit": "2025-10-23",
+        "check_date:surface": "2025-07-31",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8120787,
+            18.9803509
+          ],
+          [
+            72.811821,
+            18.9801838
+          ],
+          [
+            72.8114833,
+            18.9800039
+          ],
+          [
+            72.8111193,
+            18.9798551
+          ],
+          [
+            72.810752,
+            18.9797404
+          ],
+          [
+            72.810211,
+            18.979607
+          ],
+          [
+            72.8081503,
+            18.979113
+          ],
+          [
+            72.8074663,
+            18.978944
+          ],
+          [
+            72.8071167,
+            18.9788517
+          ],
+          [
+            72.8067752,
+            18.9787402
+          ],
+          [
+            72.8064215,
+            18.9785903
+          ],
+          [
+            72.8061369,
+            18.9784365
+          ],
+          [
+            72.8060933,
+            18.978408
+          ],
+          [
+            72.8058071,
+            18.9782223
+          ],
+          [
+            72.8056307,
+            18.9780836
+          ],
+          [
+            72.8054275,
+            18.9778915
+          ],
+          [
+            72.805272,
+            18.9777293
+          ],
+          [
+            72.805153,
+            18.9775927
+          ],
+          [
+            72.8050609,
+            18.9774764
+          ],
+          [
+            72.8049605,
+            18.9773395
+          ],
+          [
+            72.8048757,
+            18.9771984
+          ],
+          [
+            72.8047877,
+            18.977048
+          ],
+          [
+            72.8046383,
+            18.9767742
+          ],
+          [
+            72.8038795,
+            18.9752808
+          ],
+          [
+            72.8033664,
+            18.974271
+          ],
+          [
+            72.8027352,
+            18.9730508
+          ],
+          [
+            72.8025614,
+            18.9727096
+          ],
+          [
+            72.8024042,
+            18.9723862
+          ],
+          [
+            72.8022625,
+            18.972089
+          ],
+          [
+            72.8021208,
+            18.9717744
+          ],
+          [
+            72.8020099,
+            18.9714772
+          ],
+          [
+            72.8018866,
+            18.971113
+          ],
+          [
+            72.801788,
+            18.970775
+          ],
+          [
+            72.80163,
+            18.9701826
+          ],
+          [
+            72.8016223,
+            18.9701537
+          ]
+        ]
+      },
+      "id": "way/1424389019"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444850279",
+        "bus:lanes": "yes|designated|yes|yes|yes",
+        "check_date": "2025-10-23",
+        "check_date:lit": "2025-10-23",
+        "check_date:surface": "2025-07-31",
+        "destination:lanes": "Bhulabhai Desai Road|Nariman Point;Mantralaya|Nariman Point;Mantralaya|Nariman Point;Mantralaya|Nariman Point;Mantralaya",
+        "highway": "motorway",
+        "lanes": "5",
+        "lanes:bus": "1",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8016223,
+            18.9701537
+          ],
+          [
+            72.8015054,
+            18.9697153
+          ]
+        ]
+      },
+      "id": "way/1444850279"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444850280",
+        "bus:lanes": "designated|yes|yes|yes",
+        "check_date": "2025-10-23",
+        "check_date:lit": "2025-10-23",
+        "check_date:surface": "2025-07-31",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8015054,
+            18.9697153
+          ],
+          [
+            72.8010752,
+            18.9681026
+          ],
+          [
+            72.8004058,
+            18.9656159
+          ],
+          [
+            72.7996315,
+            18.9627392
+          ]
+        ]
+      },
+      "id": "way/1444850280"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444850281",
+        "bridge": "yes",
+        "bus:lanes": "yes|designated|yes|yes|yes",
+        "check_date": "2025-10-23",
+        "check_date:lit": "2025-10-23",
+        "check_date:surface": "2025-07-31",
+        "destination:lanes": "Acharya Atr Jn.;Gopalrao Deshmukh Road|Nariman Point|Nariman Point|Nariman Point|Nariman Point",
+        "highway": "motorway",
+        "lanes": "5",
+        "lanes:bus": "1",
+        "layer": "1",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt",
+        "turn:lanes": "slight_left|through|through|through|through"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8104002,
+            18.9873098
+          ],
+          [
+            72.8104089,
+            18.9872842
+          ],
+          [
+            72.8105089,
+            18.9870871
+          ],
+          [
+            72.8106059,
+            18.9869171
+          ],
+          [
+            72.8106859,
+            18.9867929
+          ],
+          [
+            72.8107899,
+            18.98667
+          ],
+          [
+            72.8108347,
+            18.9866244
+          ]
+        ]
+      },
+      "id": "way/1444850281"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444850282",
+        "bridge": "yes",
+        "bus:lanes": "designated|yes|yes|yes",
+        "check_date": "2025-10-23",
+        "check_date:lit": "2025-10-23",
+        "check_date:surface": "2025-07-31",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "layer": "1",
+        "lit": "yes",
+        "maxheight": "5.5",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8106036,
+            18.9893895
+          ],
+          [
+            72.8105561,
+            18.989288
+          ],
+          [
+            72.8104766,
+            18.9891094
+          ],
+          [
+            72.810412,
+            18.9889378
+          ],
+          [
+            72.8103576,
+            18.9887796
+          ],
+          [
+            72.8103033,
+            18.9885961
+          ],
+          [
+            72.8102691,
+            18.9884233
+          ],
+          [
+            72.8102519,
+            18.9882101
+          ],
+          [
+            72.8102491,
+            18.9880022
+          ],
+          [
+            72.8102662,
+            18.9878106
+          ],
+          [
+            72.810309,
+            18.9876
+          ],
+          [
+            72.810349,
+            18.9874597
+          ],
+          [
+            72.8104002,
+            18.9873098
+          ]
+        ]
+      },
+      "id": "way/1444850282"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444850283",
+        "bus:lanes": "yes|designated|yes|yes",
+        "highway": "motorway",
+        "lanes": "4",
+        "lanes:bus": "1",
+        "lit": "yes",
+        "maxspeed": "80",
+        "maxspeed:type": "sign",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt",
+        "turn:lanes": "slight_left|through|through|through"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8115208,
+            19.0036886
+          ],
+          [
+            72.8118355,
+            19.0043039
+          ]
+        ]
+      },
+      "id": "way/1444850283"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444850284",
+        "destination": "Nariman Point",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "lit": "yes",
+        "maxspeed": "40",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt",
+        "turn:lanes": "slight_right|slight_right"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8133105,
+            19.0077886
+          ],
+          [
+            72.8133128,
+            19.0077154
+          ],
+          [
+            72.8132799,
+            19.0072233
+          ],
+          [
+            72.8131572,
+            19.0070482
+          ]
+        ]
+      },
+      "id": "way/1444850284"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444850285",
+        "destination:lanes": "Nariman Point|Sea Link",
+        "highway": "motorway_link",
+        "lanes": "2",
+        "lit": "yes",
+        "maxspeed": "40",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt",
+        "turn:lanes": "through|slight_right"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.815366,
+            19.0105118
+          ],
+          [
+            72.8150083,
+            19.0101055
+          ]
+        ]
+      },
+      "id": "way/1444850285"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444852912",
+        "destination:lanes": "Marine Line Station;Kalbadevi|Nariman Point;Mantralaya|Nariman Point;Mantralaya",
+        "highway": "motorway",
+        "lanes": "3",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8228018,
+            18.9444794
+          ],
+          [
+            72.8230518,
+            18.9439553
+          ]
+        ]
+      },
+      "id": "way/1444852912"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444852913",
+        "highway": "motorway",
+        "lanes": "3",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road",
+        "name:en": "Mumbai Coastal Road",
+        "official_name": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "official_name:en": "Dharamveer Swarajya Rakshak Chhatrapati Sambhaji Maharaj Mumbai Coastal Road",
+        "oneway": "yes",
+        "surface": "asphalt"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8220523,
+            18.9458749
+          ],
+          [
+            72.8226669,
+            18.9447622
+          ],
+          [
+            72.8228018,
+            18.9444794
+          ]
+        ]
+      },
+      "id": "way/1444852913"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1444867825",
+        "bridge": "yes",
+        "destination": "Dadar;Worli",
+        "destination:lanes": "Dadar|Dadar|Worli|Worli",
+        "highway": "motorway_link",
+        "lanes": "4",
+        "layer": "1",
+        "lit": "yes",
+        "maxspeed": "40",
+        "motorcycle": "no",
+        "name": "Mumbai Coastal Road - Phase I",
+        "oneway": "yes",
+        "surface": "asphalt",
+        "turn:lanes": "slight_left|slight_left|through|through"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.8114322,
+            19.0080814
+          ],
+          [
+            72.8114339,
+            19.008084
+          ],
+          [
+            72.81159,
+            19.0082125
+          ],
+          [
+            72.8117613,
+            19.0083145
+          ],
+          [
+            72.8118745,
+            19.008368
+          ]
+        ]
+      },
+      "id": "way/1444867825"
+    },
+    {
+      "type": "Feature",
+      "properties": {
+        "@id": "way/1468448540",
+        "bicycle": "designated",
+        "foot": "designated",
+        "highway": "cycleway",
+        "name": "Coastal Road Promenade",
+        "oneway": "no",
+        "segregated": "yes",
+        "smoothness": "excellent",
+        "surface": "paved",
+        "width": "50"
+      },
+      "geometry": {
+        "type": "LineString",
+        "coordinates": [
+          [
+            72.7997314,
+            18.9591697
+          ],
+          [
+            72.7994159,
+            18.9596122
+          ],
+          [
+            72.7991507,
+            18.9601213
+          ],
+          [
+            72.7990365,
+            18.9605355
+          ],
+          [
+            72.798968,
+            18.961251
+          ],
+          [
+            72.7990074,
+            18.9616313
+          ],
+          [
+            72.7992021,
+            18.9624892
+          ],
+          [
+            72.7995704,
+            18.9639083
+          ],
+          [
+            72.7998166,
+            18.9649422
+          ],
+          [
+            72.7999044,
+            18.9652621
+          ],
+          [
+            72.8003389,
+            18.9670612
+          ],
+          [
+            72.800621,
+            18.968238
+          ],
+          [
+            72.8007898,
+            18.9689457
+          ],
+          [
+            72.8010107,
+            18.9695866
+          ],
+          [
+            72.801172,
+            18.9701173
+          ],
+          [
+            72.8012671,
+            18.9705811
+          ],
+          [
+            72.8014913,
+            18.9714878
+          ],
+          [
+            72.8017356,
+            18.9720855
+          ],
+          [
+            72.8021315,
+            18.9728464
+          ],
+          [
+            72.8028214,
+            18.9741717
+          ],
+          [
+            72.803392,
+            18.9753257
+          ],
+          [
+            72.8038162,
+            18.9761469
+          ],
+          [
+            72.804359,
+            18.9771745
+          ],
+          [
+            72.8047358,
+            18.9777691
+          ],
+          [
+            72.8051389,
+            18.9782544
+          ],
+          [
+            72.806103,
+            18.9789331
+          ],
+          [
+            72.8068873,
+            18.9792556
+          ],
+          [
+            72.8087806,
+            18.9797513
+          ],
+          [
+            72.80949,
+            18.9800291
+          ],
+          [
+            72.8097967,
+            18.9801217
+          ],
+          [
+            72.8102603,
+            18.9802382
+          ],
+          [
+            72.8113469,
+            18.9805302
+          ],
+          [
+            72.8119397,
+            18.9809113
+          ],
+          [
+            72.8121934,
+            18.9812235
+          ]
+        ]
+      },
+      "id": "way/1468448540"
+    }
+  ]
+}

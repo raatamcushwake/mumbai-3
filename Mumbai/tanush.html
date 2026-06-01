@@ -1,0 +1,1280 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mumbai 3.0 Master Transit & Logistics Matrix</title>
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link href="https://fonts.googleapis.com/css2?family=Barlow+Condensed:wght@400;600;700;800&family=Barlow:wght@400;500;600&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-light: #f8fafc; --panel-bg: #ffffff; --accent-blue: #0284c7;
+            --text-main: #0f172a; --text-gray: #475569; --border: #e2e8f0;
+            --status-operational: #16a34a; --status-construction: #ea580c;
+            --status-planned: #2563eb; --status-bullet: #06b6d4;
+            --status-metro: #db2777; --status-freight: #7c3aed;
+            --status-highway: #dc2626; --status-expressway: #7f1d1d;
+        }
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Barlow', -apple-system, sans-serif; }
+        body { background-color: var(--bg-light); color: var(--text-main); display: flex; flex-direction: column; height: 100vh; overflow: hidden; }
+
+        .top-nav { display: flex; align-items: center; background: #0f172a; border-bottom: 2px solid #1e293b; padding: 0 24px; height: 48px; flex-shrink: 0; gap: 4px; z-index: 100; }
+        .nav-brand { font-size: 0.78rem; font-weight: 800; color: #38bdf8; letter-spacing: 1px; text-transform: uppercase; margin-right: 20px; white-space: nowrap; font-family: 'Barlow Condensed', sans-serif; }
+        .nav-divider { width: 1px; height: 24px; background: #334155; margin-right: 16px; }
+        .nav-tab { display: flex; align-items: center; height: 48px; padding: 0 18px; font-size: 0.78rem; font-weight: 600; color: #94a3b8; cursor: pointer; border-bottom: 2px solid transparent; transition: all 0.2s ease; white-space: nowrap; letter-spacing: 0.1px; user-select: none; }
+        .nav-tab:hover { color: #e2e8f0; background: rgba(255,255,255,0.04); }
+        .nav-tab.active { color: #38bdf8; border-bottom: 2px solid #38bdf8; background: rgba(56,189,248,0.06); }
+        .nav-tab .tab-dot { width: 6px; height: 6px; border-radius: 50%; margin-right: 8px; flex-shrink: 0; }
+
+        .main-content { display: flex; flex: 1; overflow: hidden; }
+        .tab-panel { display: none; width: 100%; height: 100%; }
+        .tab-panel.active { display: flex; }
+
+        .sidebar { width: 32%; min-width: 380px; background-color: var(--panel-bg); border-right: 1px solid var(--border); padding: 24px; display: flex; flex-direction: column; gap: 14px; overflow-y: auto; z-index: 10; }
+        h1 { font-size: 1.35rem; font-weight: 700; letter-spacing: -0.5px; color: var(--text-main); }
+        h1 span { color: var(--accent-blue); }
+        .desc { font-size: 0.82rem; color: var(--text-gray); line-height: 1.5; margin-bottom: 4px; }
+        .legend-box { display: flex; flex-direction: column; gap: 6px; }
+        .legend-title { font-size: 0.78rem; font-weight: 700; color: var(--text-gray); text-transform: uppercase; letter-spacing: 0.5px; margin-top: 6px; border-bottom: 1px solid var(--border); padding-bottom: 4px; }
+        .legend-card { display: flex; align-items: center; gap: 12px; background: var(--panel-bg); border: 1px solid var(--border); padding: 8px 12px; border-radius: 6px; cursor: pointer; transition: all 0.2s ease; }
+        .legend-card:hover { background: #f8fafc; border-color: #cbd5e1; transform: translateX(2px); }
+        .line-tag { width: 30px; height: 5px; border-radius: 2px; flex-shrink: 0; }
+        .node-tag { width: 12px; height: 12px; border-radius: 50%; border: 2px solid #fff; box-shadow: 0 0 0 1px #cbd5e1; flex-shrink: 0; }
+        .status-badge { font-size: 0.62rem; padding: 2px 6px; border-radius: 4px; font-weight: 700; text-transform: uppercase; margin-left: auto; letter-spacing: 0.2px; }
+        .stat-card { background: #f1f5f9; border: 1px solid var(--border); padding: 12px; border-radius: 6px; }
+        .map-container { width: 68%; height: 100%; position: relative; }
+        #map { width: 100%; height: 100%; }
+
+        /* DISTRICT PANEL MODAL */
+        .district-panel-overlay { display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.55); z-index:9000; }
+        .district-panel-overlay.active { display:flex; align-items:center; justify-content:center; }
+        .district-panel { background:#fff; border-radius:12px; width:780px; max-width:95vw; max-height:88vh; overflow:hidden; display:flex; flex-direction:column; box-shadow:0 20px 60px rgba(0,0,0,0.3); }
+        .dp-header { padding:18px 22px 14px; background:linear-gradient(135deg,#0f172a 0%,#1e3a5f 100%); color:#fff; flex-shrink:0; }
+        .dp-header-top { display:flex; align-items:center; justify-content:space-between; }
+        .dp-badge { font-size:0.60rem; font-weight:800; text-transform:uppercase; letter-spacing:1px; padding:3px 10px; border-radius:20px; background:rgba(56,189,248,0.2); color:#38bdf8; border:1px solid rgba(56,189,248,0.3); }
+        .dp-close { width:28px; height:28px; border-radius:50%; background:rgba(255,255,255,0.1); border:none; color:#fff; cursor:pointer; font-size:1rem; display:flex; align-items:center; justify-content:center; }
+        .dp-title { font-family:'Barlow Condensed',sans-serif; font-size:1.6rem; font-weight:800; letter-spacing:0.5px; margin-top:6px; }
+        .dp-subtitle { font-size:0.75rem; color:#94a3b8; margin-top:2px; line-height:1.4; }
+        .dp-tabs { display:flex; gap:2px; padding:10px 22px 0; background:#f8fafc; border-bottom:1px solid #e2e8f0; flex-shrink:0; }
+        .dp-tab { font-size:0.72rem; font-weight:700; padding:7px 14px; border-radius:6px 6px 0 0; cursor:pointer; color:#64748b; transition:all 0.15s; border:none; background:transparent; }
+        .dp-tab.active { background:#fff; color:#0284c7; border:1px solid #e2e8f0; border-bottom:1px solid #fff; margin-bottom:-1px; }
+        .dp-body { flex:1; overflow-y:auto; padding:18px 22px; }
+        .dp-section { display:none; }
+        .dp-section.active { display:block; }
+        .dp-section-title { font-family:'Barlow Condensed',sans-serif; font-size:0.70rem; font-weight:800; color:#64748b; text-transform:uppercase; letter-spacing:0.8px; margin-bottom:10px; padding-bottom:5px; border-bottom:2px solid #e2e8f0; display:flex; align-items:center; gap:6px; }
+        .dp-grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-bottom:14px; }
+        .dp-grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:10px; margin-bottom:14px; }
+        .dp-card { background:#f8fafc; border:1px solid #e2e8f0; border-radius:8px; padding:12px; }
+        .dp-card-title { font-size:0.68rem; font-weight:800; color:#0f172a; margin-bottom:6px; display:flex; align-items:center; gap:5px; }
+        .dp-item { font-size:0.65rem; color:#475569; line-height:1.5; display:flex; gap:5px; margin-bottom:3px; }
+        .dp-item::before { content:'▸'; color:#0284c7; flex-shrink:0; }
+        .dp-item strong { color:#0f172a; }
+        .dp-highlight { background:linear-gradient(135deg,#eff6ff,#f0fdf4); border:1px solid #bfdbfe; border-radius:8px; padding:12px; margin-bottom:12px; }
+        .dp-highlight-text { font-size:0.72rem; color:#1e40af; line-height:1.6; font-style:italic; }
+        .dp-stat-row { display:flex; gap:8px; margin-bottom:12px; }
+        .dp-stat { background:#0f172a; border-radius:8px; padding:10px 14px; flex:1; text-align:center; }
+        .dp-stat-val { font-family:'Barlow Condensed',sans-serif; font-size:1.3rem; font-weight:800; color:#38bdf8; }
+        .dp-stat-lbl { font-size:0.55rem; color:#64748b; text-transform:uppercase; letter-spacing:0.5px; margin-top:1px; }
+        .dp-invest-item { display:flex; gap:8px; margin-bottom:8px; background:#fffbeb; border:1px solid #fde68a; border-radius:6px; padding:8px 10px; }
+        .dp-invest-icon { font-size:1rem; flex-shrink:0; }
+        .dp-invest-label { font-size:0.68rem; font-weight:700; color:#92400e; }
+        .dp-invest-detail { font-size:0.62rem; color:#78350f; line-height:1.4; margin-top:1px; }
+        .dp-future-item { display:flex; gap:8px; margin-bottom:8px; background:#f0fdf4; border:1px solid #bbf7d0; border-radius:6px; padding:8px 10px; }
+        .dp-future-icon { font-size:1rem; flex-shrink:0; }
+        .dp-future-label { font-size:0.68rem; font-weight:700; color:#065f46; }
+        .dp-future-detail { font-size:0.62rem; color:#047857; line-height:1.4; margin-top:1px; }
+        .dp-badge-row { display:flex; flex-wrap:wrap; gap:5px; margin-top:6px; }
+        .dp-tag { font-size:0.60rem; font-weight:700; padding:2px 8px; border-radius:4px; }
+        .dp-tag.op { background:rgba(22,163,74,0.1); color:#15803d; border:1px solid rgba(22,163,74,0.2); }
+        .dp-tag.uc { background:rgba(234,88,12,0.1); color:#c2410c; border:1px solid rgba(234,88,12,0.2); }
+        .dp-tag.pl { background:rgba(37,99,235,0.1); color:#1d4ed8; border:1px solid rgba(37,99,235,0.2); }
+        .dp-footer { padding:12px 22px; background:#f8fafc; border-top:1px solid #e2e8f0; display:flex; justify-content:space-between; align-items:center; flex-shrink:0; }
+        .dp-download-btn { display:inline-flex; align-items:center; gap:7px; background:#0f172a; color:#fff; border:none; padding:9px 18px; border-radius:7px; font-size:0.72rem; font-weight:700; cursor:pointer; font-family:'Barlow Condensed',sans-serif; letter-spacing:0.5px; text-transform:uppercase; transition:background 0.2s; }
+        .dp-download-btn:hover { background:#1e40af; }
+        .dp-footer-note { font-size:0.62rem; color:#94a3b8; }
+
+        /* DISTRICT MARKERS */
+        .district-marker-icon { background:#0f172a; color:#38bdf8; border:2px solid #38bdf8; border-radius:8px; padding:4px 8px; font-family:'Barlow Condensed',sans-serif; font-size:0.68rem; font-weight:800; letter-spacing:0.5px; white-space:nowrap; box-shadow:0 2px 8px rgba(0,0,0,0.3); cursor:pointer; text-transform:uppercase; }
+        .district-marker-icon:hover { background:#1e40af; }
+
+        /* TAB 2 */
+        #panel-map2 { flex-direction: column; background: #fff; overflow: hidden; }
+        .scm-wrapper { display: flex; flex-direction: column; width: 100%; height: 100%; overflow: hidden; }
+        .scm-header { background: #1a1a2e; color: #fff; padding: 10px 20px; display: flex; align-items: center; justify-content: space-between; flex-shrink: 0; }
+        .scm-header-left h2 { font-family: 'Barlow Condensed', sans-serif; font-size: 1.5rem; font-weight: 800; letter-spacing: 1px; color: #fff; text-transform: uppercase; }
+        .scm-header-left h2 span { color: #f59e0b; }
+        .scm-header-left p { font-size: 0.70rem; color: #94a3b8; margin-top: 2px; }
+        .scm-tagline { font-size: 0.65rem; color: #60a5fa; font-style: italic; text-align: right; }
+        .scm-body { display: flex; flex: 1; overflow: hidden; }
+        .scm-left { width: 240px; min-width: 220px; background: #fff; border-right: 1px solid #e2e8f0; overflow-y: auto; flex-shrink: 0; padding: 10px; }
+        .scm-section-head { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 800; color: #fff; text-transform: uppercase; letter-spacing: 0.5px; background: #1a1a2e; padding: 4px 8px; margin: 6px 0 4px; border-radius: 3px; }
+        .scm-corridor-item { display: flex; align-items: center; gap: 7px; padding: 4px 6px; border-radius: 4px; cursor: pointer; transition: background 0.15s; margin-bottom: 2px; border: 1px solid transparent; }
+        .scm-corridor-item:hover { background: #f0f9ff; border-color: #bae6fd; }
+        .scm-corridor-num { width: 20px; height: 20px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.65rem; font-weight: 800; flex-shrink: 0; color: #fff; font-family: 'Barlow Condensed', sans-serif; }
+        .scm-corridor-label { font-size: 0.70rem; font-weight: 600; color: #1e293b; line-height: 1.2; }
+        .scm-corridor-sub { font-size: 0.60rem; color: #64748b; }
+        .scm-legend-section { padding: 6px; border: 1px solid #e2e8f0; border-radius: 4px; margin-top: 6px; }
+        .scm-legend-title { font-size: 0.60rem; font-weight: 800; color: #475569; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; }
+        .scm-legend-item { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; }
+        .scm-legend-line { width: 28px; height: 3px; border-radius: 1px; flex-shrink: 0; }
+        .scm-legend-text { font-size: 0.60rem; color: #475569; }
+        .scm-zone-item { display: flex; align-items: center; gap: 5px; margin-bottom: 2px; }
+        .scm-zone-box { width: 14px; height: 10px; border-radius: 2px; flex-shrink: 0; }
+        .scm-zone-text { font-size: 0.60rem; color: #374151; }
+        .scm-map-area { flex: 1; height: 100%; position: relative; }
+        #map2 { width: 100%; height: 100%; }
+        .scm-right { width: 200px; min-width: 180px; background: #fff; border-left: 1px solid #e2e8f0; overflow-y: auto; flex-shrink: 0; padding: 10px; display: flex; flex-direction: column; gap: 6px; }
+        .scm-node-card { border: 1px solid #e2e8f0; border-radius: 5px; padding: 6px 8px; background: #f8fafc; cursor: pointer; transition: all 0.15s; }
+        .scm-node-card:hover { border-color: #93c5fd; background: #eff6ff; }
+        .scm-node-card-title { font-size: 0.70rem; font-weight: 700; color: #1e293b; }
+        .scm-node-card-sub { font-size: 0.60rem; color: #64748b; margin-top: 1px; }
+        .scm-node-badge { display: inline-block; font-size: 0.55rem; font-weight: 700; padding: 1px 5px; border-radius: 3px; margin-top: 3px; text-transform: uppercase; }
+        .badge-op { background: rgba(22,163,74,0.12); color: #15803d; }
+        .badge-uc { background: rgba(234,88,12,0.12); color: #c2410c; }
+        .badge-pl { background: rgba(37,99,235,0.12); color: #1d4ed8; }
+        .scm-bottom { display: flex; background: #f8fafc; border-top: 2px solid #e2e8f0; flex-shrink: 0; height: 195px; overflow: hidden; }
+        .scm-matrix-panel { flex: 1.6; border-right: 1px solid #e2e8f0; overflow-y: auto; padding: 8px 10px; }
+        .scm-matrix-panel h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.80rem; font-weight: 800; color: #1a1a2e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 6px; border-bottom: 2px solid #1a1a2e; padding-bottom: 3px; }
+        .econn-table { width: 100%; border-collapse: collapse; font-size: 0.60rem; }
+        .econn-table th { background: #1a1a2e; color: #fff; padding: 3px 6px; text-align: left; font-weight: 700; font-family: 'Barlow Condensed', sans-serif; font-size: 0.62rem; text-transform: uppercase; }
+        .econn-table td { padding: 3px 6px; border-bottom: 1px solid #e9ecef; color: #374151; vertical-align: middle; }
+        .econn-table tr:nth-child(even) td { background: #f1f5f9; }
+        .scm-mega-panel { flex: 1; border-right: 1px solid #e2e8f0; overflow-y: auto; padding: 8px 10px; }
+        .scm-mega-panel h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.80rem; font-weight: 800; color: #1a1a2e; text-transform: uppercase; margin-bottom: 6px; border-bottom: 2px solid #f59e0b; padding-bottom: 3px; }
+        .mega-item { display: flex; align-items: flex-start; gap: 7px; margin-bottom: 7px; }
+        .mega-icon { font-size: 1rem; flex-shrink: 0; }
+        .mega-item-label { font-size: 0.65rem; font-weight: 700; color: #1e293b; }
+        .mega-item-detail { font-size: 0.60rem; color: #64748b; margin-top: 1px; line-height: 1.3; }
+        .mega-item-detail strong { color: #dc2626; }
+        .scm-takeaway-panel { flex: 1.1; overflow-y: auto; padding: 8px 10px; }
+        .scm-takeaway-panel h3 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.80rem; font-weight: 800; color: #1a1a2e; text-transform: uppercase; margin-bottom: 6px; border-bottom: 2px solid #16a34a; padding-bottom: 3px; }
+        .takeaway-item { display: flex; align-items: flex-start; gap: 5px; margin-bottom: 5px; }
+        .takeaway-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 2px; }
+        .takeaway-text { font-size: 0.62rem; color: #374151; line-height: 1.35; }
+
+        /* TAB 3 */
+        #panel-matrix { flex-direction: column; background: #0d1117; overflow: hidden; }
+        .matrix-topbar { background: #0d1117; border-bottom: 1px solid #1e293b; padding: 10px 20px; flex-shrink: 0; display: flex; align-items: center; justify-content: space-between; }
+        .matrix-topbar-title { font-family: 'Barlow Condensed', sans-serif; font-size: 1.1rem; font-weight: 800; color: #f1f5f9; }
+        .matrix-topbar-title span { color: #38bdf8; }
+        .matrix-topbar-sub { font-size: 0.68rem; color: #64748b; }
+        .matrix-topbar-tag { font-size: 0.65rem; color: #f59e0b; font-style: italic; font-family: 'Barlow Condensed', sans-serif; letter-spacing: 0.5px; }
+        .matrix-filter-bar { background: #0d1117; border-bottom: 1px solid #1e293b; padding: 8px 20px; flex-shrink: 0; display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+        .filter-btn { font-size: 0.65rem; font-weight: 700; padding: 4px 12px; border-radius: 20px; border: 1px solid #334155; background: #0f172a; color: #94a3b8; cursor: pointer; text-transform: uppercase; letter-spacing: 0.3px; transition: all 0.2s; font-family: 'Barlow Condensed', sans-serif; }
+        .filter-btn:hover, .filter-btn.active { background: #38bdf8; color: #0f172a; border-color: #38bdf8; }
+        .matrix-map-container { width: 100%; height: 420px; border-bottom: 2px solid #1e293b; position: relative; flex-shrink: 0; }
+        #map3 { width: 100%; height: 100%; }
+        .matrix-scroll { flex: 1; overflow-y: auto; padding: 16px 20px; display: flex; flex-direction: column; gap: 16px; }
+        .summary-row { display: flex; gap: 12px; flex-shrink: 0; }
+        .summary-chip { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px 20px; flex: 1; }
+        .summary-chip .chip-val { font-size: 1.8rem; font-weight: 800; color: #38bdf8; font-family: 'Barlow Condensed', sans-serif; line-height: 1; }
+        .summary-chip .chip-lbl { font-size: 0.62rem; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-top: 3px; }
+        .report-section-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.72rem; font-weight: 800; color: #64748b; text-transform: uppercase; letter-spacing: 1px; padding-bottom: 6px; border-bottom: 1px solid #1e293b; margin-top: 4px; }
+        .dark-table { width: 100%; border-collapse: collapse; }
+        .dark-table thead tr { background: #1e293b; }
+        .dark-table th { font-size: 0.62rem; font-weight: 700; color: #64748b; text-transform: uppercase; letter-spacing: 0.4px; padding: 8px 12px; text-align: left; border-bottom: 1px solid #334155; font-family: 'Barlow Condensed', sans-serif; }
+        .dark-table tbody tr { border-bottom: 1px solid #151e2d; transition: background 0.15s; }
+        .dark-table tbody tr:hover { background: #1a2332; }
+        .dark-table td { font-size: 0.73rem; color: #cbd5e1; padding: 8px 12px; vertical-align: middle; }
+        .dark-table td:first-child { font-weight: 600; color: #f1f5f9; }
+        .color-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; margin-right: 6px; vertical-align: middle; flex-shrink: 0; }
+        .m-badge { display: inline-block; font-size: 0.58rem; font-weight: 800; padding: 2px 7px; border-radius: 4px; text-transform: uppercase; letter-spacing: 0.3px; font-family: 'Barlow Condensed', sans-serif; }
+        .m-badge.operational { background: rgba(22,163,74,0.15); color: #4ade80; border: 1px solid rgba(22,163,74,0.3); }
+        .m-badge.construction { background: rgba(234,88,12,0.15); color: #fb923c; border: 1px solid rgba(234,88,12,0.3); }
+        .m-badge.planned { background: rgba(37,99,235,0.15); color: #60a5fa; border: 1px solid rgba(37,99,235,0.3); }
+        .report-grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+        .report-grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; }
+        .report-card { background: #1e293b; border: 1px solid #334155; border-radius: 8px; padding: 14px; }
+        .report-card h4 { font-family: 'Barlow Condensed', sans-serif; font-size: 0.75rem; font-weight: 800; color: #38bdf8; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 10px; padding-bottom: 6px; border-bottom: 1px solid #334155; }
+        .exec-item { font-size: 0.68rem; color: #94a3b8; line-height: 1.5; display: flex; gap: 6px; margin-bottom: 4px; }
+        .exec-item::before { content: '•'; color: #38bdf8; flex-shrink: 0; }
+        .concept-row { display: flex; gap: 8px; margin-bottom: 6px; }
+        .concept-label { font-size: 0.62rem; font-weight: 800; color: #38bdf8; font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; width: 60px; flex-shrink: 0; padding-top: 1px; }
+        .concept-val { font-size: 0.68rem; color: #94a3b8; line-height: 1.4; }
+        .infra-item { display: flex; align-items: center; gap: 8px; padding: 5px 0; border-bottom: 1px solid #1e293b; }
+        .infra-item:last-child { border-bottom: none; }
+        .infra-icon { font-size: 0.90rem; width: 20px; text-align: center; flex-shrink: 0; }
+        .infra-label { font-size: 0.65rem; color: #94a3b8; flex: 1; }
+        .infra-val { font-size: 0.68rem; font-weight: 700; color: #38bdf8; font-family: 'Barlow Condensed', sans-serif; }
+        .corridor-mini-table { width: 100%; border-collapse: collapse; }
+        .corridor-mini-table th { font-size: 0.60rem; color: #475569; text-transform: uppercase; padding: 4px 6px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; border-bottom: 1px solid #334155; text-align: left; }
+        .corridor-mini-table td { font-size: 0.62rem; color: #94a3b8; padding: 4px 6px; border-bottom: 1px solid #151e2d; }
+        .corridor-mini-table td:first-child { font-weight: 600; color: #cbd5e1; }
+        .projects-table { width: 100%; border-collapse: collapse; }
+        .projects-table thead tr { background: #1e293b; }
+        .projects-table th { font-size: 0.58rem; font-weight: 700; color: #64748b; text-transform: uppercase; padding: 7px 8px; text-align: left; border-bottom: 1px solid #334155; font-family: 'Barlow Condensed', sans-serif; white-space: nowrap; }
+        .projects-table tbody tr { border-bottom: 1px solid #151e2d; }
+        .projects-table tbody tr:hover { background: #1a2332; }
+        .projects-table td { font-size: 0.65rem; color: #cbd5e1; padding: 7px 8px; vertical-align: middle; }
+        .projects-table td:first-child { font-weight: 600; color: #f1f5f9; font-size: 0.70rem; }
+        .prog-bar { height: 4px; background: #1e293b; border-radius: 2px; overflow: hidden; margin-top: 3px; width: 60px; }
+        .prog-fill { height: 100%; border-radius: 2px; }
+        .prog-val { font-size: 0.60rem; color: #64748b; margin-left: 4px; }
+        .growth-table { width: 100%; border-collapse: collapse; }
+        .growth-table th { font-size: 0.60rem; color: #475569; text-transform: uppercase; padding: 5px 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; border-bottom: 1px solid #334155; text-align: left; }
+        .growth-table td { font-size: 0.63rem; color: #94a3b8; padding: 5px 8px; border-bottom: 1px solid #151e2d; }
+        .growth-table td:first-child { font-weight: 600; color: #cbd5e1; }
+        .reality-item { display: flex; gap: 6px; margin-bottom: 5px; font-size: 0.65rem; color: #94a3b8; line-height: 1.4; }
+        .reality-item::before { content: '✓'; color: #4ade80; flex-shrink: 0; font-weight: 800; }
+        .forecast-table { width: 100%; border-collapse: collapse; }
+        .forecast-table th { font-size: 0.60rem; color: #475569; text-transform: uppercase; padding: 5px 8px; font-family: 'Barlow Condensed', sans-serif; font-weight: 700; border-bottom: 1px solid #334155; text-align: left; }
+        .forecast-table td { font-size: 0.63rem; color: #94a3b8; padding: 5px 8px; border-bottom: 1px solid #151e2d; }
+        .forecast-table td:first-child { font-weight: 600; color: #cbd5e1; }
+        .prob-badge { display: inline-block; font-size: 0.58rem; font-weight: 700; padding: 1px 6px; border-radius: 3px; font-family: 'Barlow Condensed', sans-serif; }
+        .prob-high { background: rgba(22,163,74,0.15); color: #4ade80; }
+        .prob-med { background: rgba(234,165,12,0.15); color: #fbbf24; }
+        .hotspot-category { margin-bottom: 8px; }
+        .hotspot-cat-title { font-size: 0.62rem; font-weight: 800; color: #38bdf8; font-family: 'Barlow Condensed', sans-serif; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; gap: 5px; }
+        .hotspot-items { display: flex; flex-wrap: wrap; gap: 4px; }
+        .hotspot-tag { font-size: 0.60rem; background: #0f172a; border: 1px solid #334155; color: #94a3b8; padding: 2px 7px; border-radius: 3px; }
+        .invest-point { display: flex; gap: 6px; margin-bottom: 5px; font-size: 0.65rem; color: #94a3b8; line-height: 1.4; }
+        .invest-point::before { content: '→'; color: #f59e0b; flex-shrink: 0; font-weight: 800; }
+        .key-takeaway { display: flex; gap: 8px; margin-bottom: 7px; }
+        .kt-num { width: 20px; height: 20px; background: #38bdf8; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.60rem; font-weight: 800; color: #0f172a; flex-shrink: 0; margin-top: 1px; }
+        .kt-text { font-size: 0.70rem; color: #94a3b8; line-height: 1.5; }
+        .kt-text strong { color: #e2e8f0; }
+        .bullet-list { list-style: none; display: flex; flex-direction: column; gap: 5px; }
+        .bullet-list li { font-size: 0.68rem; color: #94a3b8; line-height: 1.4; display: flex; align-items: flex-start; gap: 6px; }
+        .bullet-list li::before { content: '▸'; color: #38bdf8; flex-shrink: 0; font-size: 0.65rem; margin-top: 1px; }
+        .bullet-list li strong { color: #e2e8f0; }
+        .map3-legend { position: absolute; bottom: 16px; left: 16px; z-index: 1000; background: rgba(255,255,255,0.96); border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); min-width: 180px; }
+        .map3-legend-title { font-family: 'Barlow Condensed', sans-serif; font-size: 0.68rem; font-weight: 800; color: #1a1a2e; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 7px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px; }
+        .map3-legend-item { display: flex; align-items: center; gap: 7px; margin-bottom: 4px; }
+        .map3-legend-line { width: 28px; height: 3px; border-radius: 1px; flex-shrink: 0; }
+        .map3-legend-dash { width: 28px; height: 0; border-top: 3px dashed; flex-shrink: 0; }
+        .map3-legend-text { font-size: 0.60rem; color: #374151; font-weight: 600; }
+    </style>
+</head>
+<body>
+
+<!-- DISTRICT PANEL MODAL -->
+<div class="district-panel-overlay" id="districtOverlay" onclick="closeDistrictPanel(event)">
+  <div class="district-panel" id="districtPanel">
+    <div class="dp-header">
+      <div class="dp-header-top">
+        <span class="dp-badge" id="dpBadge">NAINA · CIDCO Project</span>
+        <button class="dp-close" onclick="closeDistrictPanelBtn()">✕</button>
+      </div>
+      <div class="dp-title" id="dpTitle">Panvel</div>
+      <div class="dp-subtitle" id="dpSubtitle">Emerging Nucleus of 3rd Mumbai</div>
+    </div>
+    <div class="dp-tabs">
+      <button class="dp-tab active" onclick="switchDpTab('overview',this)">Overview</button>
+      <button class="dp-tab" onclick="switchDpTab('connectivity',this)">Connectivity</button>
+      <button class="dp-tab" onclick="switchDpTab('projects',this)">Major Projects</button>
+      <button class="dp-tab" onclick="switchDpTab('future',this)">Future Plans</button>
+      <button class="dp-tab" onclick="switchDpTab('investor',this)">Investor Edge</button>
+    </div>
+    <div class="dp-body" id="dpBody"></div>
+    <div class="dp-footer">
+      <span class="dp-footer-note">📍 NAINA · CIDCO Planned Node · Data as of 2025</span>
+      <button class="dp-download-btn" id="dpDownloadBtn" onclick="downloadDistrictReport()">⬇ Download District Report</button>
+    </div>
+  </div>
+</div>
+
+<nav class="top-nav">
+    <div class="nav-brand">🏙️ Mumbai 3.0</div>
+    <div class="nav-divider"></div>
+    <div class="nav-tab active" onclick="switchTab('master')" id="tab-master"><span class="tab-dot" style="background:#38bdf8;"></span>Mumbai 3.0</div>
+    <div class="nav-tab" onclick="switchTab('map2')" id="tab-map2"><span class="tab-dot" style="background:#a78bfa;"></span>Mumbai 3.0 Strategic Connectivity Map</div>
+    <div class="nav-tab" onclick="switchTab('matrix')" id="tab-matrix"><span class="tab-dot" style="background:#34d399;"></span>Mumbai 3.0 Strategic Connectivity Matrix</div>
+</nav>
+
+<div class="main-content">
+
+<!-- TAB 1: MASTER MAP -->
+<div class="tab-panel active" id="panel-master">
+    <div class="sidebar">
+        <h1>Mumbai 3.0 <span>Master Matrix v3</span></h1>
+        <p class="desc">Granular GIS master plan map integrating the exact operational, under-construction, and proposed corridors across the 324.40 Sq. Km KSC New Town boundary canvas. Click any <strong>NAINA District pin</strong> on the map for full district intelligence.</p>
+        <div class="legend-box">
+            <div class="legend-title">📍 NAINA Districts (Click for Detail)</div>
+            <div class="legend-card" style="background:#f0fdf4;border-color:#86efac;cursor:default;"><div class="node-tag" style="background:#38bdf8;"></div><div><div style="font-size:0.82rem;font-weight:600;">7 NAINA Nodes Active</div><div style="font-size:0.72rem;color:var(--text-gray);">Panvel · Ulwe · Uran · Taloja · Pen · Karjat-Neral · Kalyan</div></div><span class="status-badge" style="background:rgba(56,189,248,0.1);color:#0284c7;">Click Pins</span></div>
+        </div>
+        <div class="legend-box">
+            <div class="legend-title">✈️ Aviation Hubs</div>
+            <div class="legend-card" onclick="focusNetwork([18.953,73.065],14)"><div class="node-tag" style="background:#0f172a;"></div><div><div style="font-size:0.82rem;font-weight:600;">Navi Mumbai International Airport</div><div style="font-size:0.72rem;color:var(--text-gray);">4-Terminal Core Greenfield Aerotropolis</div></div><span class="status-badge" style="background:rgba(234,88,12,0.1);color:var(--status-construction);">Under Const</span></div>
+        </div>
+        <div class="legend-box">
+            <div class="legend-title">⚓ Maritime Gateways</div>
+            <div class="legend-card" onclick="focusNetwork([18.950,72.950],13)"><div class="node-tag" style="background:var(--accent-blue);"></div><div><div style="font-size:0.82rem;font-weight:600;">JNPT Logistics Port Complex</div><div style="font-size:0.72rem;color:var(--text-gray);">Primary Mega Container Shipping Terminal</div></div><span class="status-badge" style="background:rgba(22,163,74,0.1);color:var(--status-operational);">Operational</span></div>
+        </div>
+        <div class="legend-box">
+            <div class="legend-title">🛣️ Highway & Expressway Matrix</div>
+            <div class="legend-card" onclick="focusNetwork([18.900,72.965],13)"><div class="line-tag" style="background:var(--status-highway);"></div><div><div style="font-size:0.82rem;font-weight:600;">Atal Setu Link (MTHL Freeway)</div><div style="font-size:0.72rem;color:var(--text-gray);">Trans-Harbour 6-Lane Coastal Gateway Link</div></div><span class="status-badge" style="background:rgba(22,163,74,0.1);color:var(--status-operational);">Operational</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.935,73.010],13)"><div class="line-tag" style="background:#b91c1c;"></div><div><div style="font-size:0.82rem;font-weight:600;">JNPT Corridor (NH-348 / NH-348A)</div><div style="font-size:0.72rem;color:var(--text-gray);">Arterial Port Cargo Freight Pipeline Route</div></div><span class="status-badge" style="background:rgba(22,163,74,0.1);color:var(--status-operational);">Operational</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.945,73.140],12)"><div class="line-tag" style="background:#b91c1c;"></div><div><div style="font-size:0.82rem;font-weight:600;">National Highway 48 (NH-48 Corridor)</div><div style="font-size:0.72rem;color:var(--text-gray);">Heavy-Duty Continental Logistic Carrier Trunk</div></div><span class="status-badge" style="background:rgba(22,163,74,0.1);color:var(--status-operational);">Operational</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.860,73.170],12)"><div class="line-tag" style="background:var(--status-expressway);"></div><div><div style="font-size:0.82rem;font-weight:600;">Mumbai - Pune Expressway (E-Way)</div><div style="font-size:0.72rem;color:var(--text-gray);">High-Speed Access Along Eastern Boundary Flank</div></div><span class="status-badge" style="background:rgba(22,163,74,0.1);color:var(--status-operational);">Operational</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.925,73.065],12)"><div class="line-tag" style="background:var(--status-construction);height:4px;border-top:2px dashed #fff;"></div><div><div style="font-size:0.82rem;font-weight:600;">Virar-Alibaug Multi-Modal Highway</div><div style="font-size:0.72rem;color:var(--text-gray);">Future Outer-Ring Logistic Ring Expressway</div></div><span class="status-badge" style="background:rgba(234,88,12,0.1);color:var(--status-construction);">Under Const</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.920,73.030],13)"><div class="line-tag" style="background:var(--status-planned);height:4px;border-bottom:2px dotted #fff;"></div><div><div style="font-size:0.82rem;font-weight:600;">Mumbai-Goa Expressway (NH-66)</div><div style="font-size:0.72rem;color:var(--text-gray);">Proposed Southern Coastal Connectivity Route</div></div><span class="status-badge" style="background:rgba(37,99,235,0.1);color:var(--status-planned);">Planned</span></div>
+        </div>
+        <div class="legend-box">
+            <div class="legend-title">🚇 Integrated Metro Systems</div>
+            <div class="legend-card" onclick="focusNetwork([18.995,73.025],13)"><div class="line-tag" style="background:var(--status-metro);"></div><div><div style="font-size:0.82rem;font-weight:600;">Belapur - Pendhar Line 1</div><div style="font-size:0.72rem;color:var(--text-gray);">Urban Passenger Commuter Mass Grid</div></div><span class="status-badge" style="background:rgba(22,163,74,0.1);color:var(--status-operational);">Operational</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.965,73.065],13)"><div class="line-tag" style="background:var(--status-construction);height:4px;border-top:2px dashed #fff;"></div><div><div style="font-size:0.82rem;font-weight:600;">Metro Line 8 — NMIA Airport Link</div><div style="font-size:0.72rem;color:var(--text-gray);">BKC to NMIA via Navi Mumbai · Airport Metro</div></div><span class="status-badge" style="background:rgba(234,88,12,0.1);color:var(--status-construction);">Under Const</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.890,73.020],12)"><div class="line-tag" style="background:var(--status-planned);height:4px;border-bottom:2px dotted #fff;"></div><div><div style="font-size:0.82rem;font-weight:600;">MTHL Cross-Harbour Mass Rapid Metro</div><div style="font-size:0.72rem;color:var(--text-gray);">Proposed High-Capacity East-West Metro Line</div></div><span class="status-badge" style="background:rgba(37,99,235,0.1);color:var(--status-planned);">Planned</span></div>
+        </div>
+        <div class="legend-box">
+            <div class="legend-title">🚆 Sub-Rail & Freight Railways</div>
+            <div class="legend-card" onclick="focusNetwork([18.878,72.943],13)"><div class="line-tag" style="background:var(--status-operational);"></div><div><div style="font-size:0.82rem;font-weight:600;">Uran - Belapur Commuter Local Line</div><div style="font-size:0.72rem;color:var(--text-gray);">Passenger Feeder Segment Transit Loop</div></div><span class="status-badge" style="background:rgba(22,163,74,0.1);color:var(--status-operational);">Operational</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.940,73.120],12)"><div class="line-tag" style="background:var(--status-construction);height:4px;border-top:2px dashed #fff;"></div><div><div style="font-size:0.82rem;font-weight:600;">Panvel - Karjat Double-Track Line</div><div style="font-size:0.72rem;color:var(--text-gray);">Suburban Rail Feeder Segment Expansion Work</div></div><span class="status-badge" style="background:rgba(234,88,12,0.1);color:var(--status-construction);">Under Const</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.700,72.890],10)"><div class="line-tag" style="background:#92400e;"></div><div><div style="font-size:0.82rem;font-weight:600;">Konkan Railway</div><div style="font-size:0.72rem;color:var(--text-gray);">Mumbai–Mangalore Coastal Rail Spine</div></div><span class="status-badge" style="background:rgba(22,163,74,0.1);color:var(--status-operational);">Operational</span></div>
+            <div class="legend-card" onclick="focusNetwork([18.868,73.023],12)"><div class="line-tag" style="background:var(--status-freight);height:4px;border-top:2px dotted #fff;"></div><div><div style="font-size:0.82rem;font-weight:600;">Panvel - Uran Cargo DFC Link</div><div style="font-size:0.72rem;color:var(--text-gray);">Dedicated Heavy Freight Infrastructure Corridor Grid</div></div><span class="status-badge" style="background:rgba(124,58,237,0.1);color:var(--status-freight);">Planned</span></div>
+        </div>
+        <div class="stat-card" style="margin-top:auto;background:rgba(2,132,199,0.05);border-color:rgba(2,132,199,0.15);">
+            <span style="font-size:0.72rem;font-weight:bold;color:var(--accent-blue);display:block;margin-bottom:2px;">MASTER INTERACTIVE MATRIX</span>
+            <p style="font-size:0.72rem;color:var(--text-gray);line-height:1.4;">Click any <strong>NAINA District pin</strong> on the map to explore full connectivity, projects, future plans & investor data. Download district reports instantly.</p>
+        </div>
+    </div>
+    <div class="map-container"><div id="map"></div></div>
+</div>
+
+<!-- TAB 2: STRATEGIC CONNECTIVITY MAP -->
+<div class="tab-panel" id="panel-map2">
+    <div class="scm-wrapper">
+        <div class="scm-header">
+            <div class="scm-header-left">
+                <h2>MUMBAI <span>3.0</span> — Strategic Connectivity Map</h2>
+                <p>One Region. Multiple Gateways. Unlimited Potential.</p>
+            </div>
+            <div class="scm-tagline">Infrastructure-led Transformation · 324.40 Sq. Km KSC Zone</div>
+        </div>
+        <div class="scm-body">
+            <div class="scm-left">
+                <div class="scm-section-head">📋 Major Infrastructure Corridors</div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([18.900,72.920],12)"><div class="scm-corridor-num" style="background:#e53e3e;">1</div><div><div class="scm-corridor-label">MTHL (Atal Setu)</div><div class="scm-corridor-sub">Sewri – Nhava Sheva</div></div></div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([18.960,72.835],12)"><div class="scm-corridor-num" style="background:#3182ce;">2</div><div><div class="scm-corridor-label">Mumbai Coastal Road</div><div class="scm-corridor-sub">Marine Lines – Versova</div></div></div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([19.050,72.840],12)"><div class="scm-corridor-num" style="background:#38a169;">3</div><div><div class="scm-corridor-label">Western Express Highway</div><div class="scm-corridor-sub">South Mumbai – Virar</div></div></div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([19.040,72.980],12)"><div class="scm-corridor-num" style="background:#d69e2e;">4</div><div><div class="scm-corridor-label">Metro Line 4</div><div class="scm-corridor-sub">Wadala – Thane – Kasarvadavali</div></div></div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([19.220,73.030],12)"><div class="scm-corridor-num" style="background:#9f7aea;">5</div><div><div class="scm-corridor-label">Metro Line 5</div><div class="scm-corridor-sub">Thane – Bhiwandi – Kalyan</div></div></div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([18.925,73.065],11)"><div class="scm-corridor-num" style="background:#ed8936;">6</div><div><div class="scm-corridor-label">Virar–Alibaug Multimodal</div><div class="scm-corridor-sub">Virar – Palghar – Alibaug</div></div></div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([18.860,73.170],12)"><div class="scm-corridor-num" style="background:#7f1d1d;">7</div><div><div class="scm-corridor-label">Mumbai–Pune Expressway</div><div class="scm-corridor-sub">Panvel – Pune</div></div></div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([18.953,73.065],13)"><div class="scm-corridor-num" style="background:#0284c7;">8</div><div><div class="scm-corridor-label">NMIA Airport</div><div class="scm-corridor-sub">Ulwe / Panvel</div></div></div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([18.950,72.950],13)"><div class="scm-corridor-num" style="background:#2d6a4f;">9</div><div><div class="scm-corridor-label">JNPT Port Connectivity</div><div class="scm-corridor-sub">Port – Expressways – DFC</div></div></div>
+                <div class="scm-corridor-item" onclick="focusNetwork2([19.180,73.000],12)"><div class="scm-corridor-num" style="background:#c0392b;">10</div><div><div class="scm-corridor-label">Central Railway Corridor</div><div class="scm-corridor-sub">Mumbai CST – Kalyan</div></div></div>
+                <div class="scm-legend-section" style="margin-top:10px;">
+                    <div class="scm-legend-title">Legend</div>
+                    <div class="scm-legend-item"><div class="scm-legend-line" style="background:#db2777;"></div><span class="scm-legend-text">Metro Lines</span></div>
+                    <div class="scm-legend-item"><div class="scm-legend-line" style="background:#475569;border-top:2px dashed #475569;height:0;"></div><span class="scm-legend-text">Rail Corridors</span></div>
+                    <div class="scm-legend-item"><div class="scm-legend-line" style="background:#dc2626;"></div><span class="scm-legend-text">Expressways</span></div>
+                    <div class="scm-legend-item"><div class="scm-legend-line" style="background:#3b82f6;"></div><span class="scm-legend-text">Sea Link / Coastal Road</span></div>
+                    <div class="scm-legend-item"><span style="font-size:0.80rem;">✈️</span><span class="scm-legend-text">Airport</span></div>
+                    <div class="scm-legend-item"><span style="font-size:0.80rem;">⚓</span><span class="scm-legend-text">Port</span></div>
+                </div>
+                <div class="scm-section-head" style="margin-top:8px;">Economic Zones</div>
+                <div class="scm-zone-item"><div class="scm-zone-box" style="background:rgba(234,88,12,0.25);border:1px solid #ea580c;"></div><span class="scm-zone-text">Logistics & Warehousing Hub</span></div>
+                <div class="scm-zone-item"><div class="scm-zone-box" style="background:rgba(37,99,235,0.25);border:1px solid #2563eb;"></div><span class="scm-zone-text">Commercial / Business Hub</span></div>
+                <div class="scm-zone-item"><div class="scm-zone-box" style="background:rgba(6,182,212,0.25);border:1px solid #06b6d4;"></div><span class="scm-zone-text">Aero Logistics Zone</span></div>
+                <div class="scm-zone-item"><div class="scm-zone-box" style="background:rgba(22,163,74,0.25);border:1px solid #16a34a;"></div><span class="scm-zone-text">Industrial Cluster</span></div>
+                <div class="scm-zone-item"><div class="scm-zone-box" style="background:rgba(139,92,246,0.25);border:1px solid #8b5cf6;"></div><span class="scm-zone-text">Residential Growth Corridor</span></div>
+            </div>
+            <div class="scm-map-area"><div id="map2"></div></div>
+            <div class="scm-right">
+                <div style="font-family:'Barlow Condensed',sans-serif;font-size:0.72rem;font-weight:800;color:#1a1a2e;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #1a1a2e;padding-bottom:3px;margin-bottom:4px;">Key Nodes</div>
+                <div class="scm-node-card" onclick="focusNetwork2([18.953,73.065],13)"><div class="scm-node-card-title">✈️ NMIA</div><div class="scm-node-card-sub">Navi Mumbai International Airport</div><span class="scm-node-badge badge-uc">Under Construction</span></div>
+                <div class="scm-node-card" onclick="focusNetwork2([18.950,72.950],13)"><div class="scm-node-card-title">⚓ JNPT Port</div><div class="scm-node-card-sub">India's Largest Container Port</div><span class="scm-node-badge badge-op">Operational</span></div>
+                <div class="scm-node-card" onclick="focusNetwork2([18.990,73.115],13)"><div class="scm-node-card-title">🚇 Panvel Hub</div><div class="scm-node-card-sub">Multi-modal Transit Hub · Metro Line 8</div><span class="scm-node-badge badge-uc">Under Construction</span></div>
+                <div class="scm-node-card" onclick="focusNetwork2([18.995,73.025],13)"><div class="scm-node-card-title">🚇 Belapur CBD</div><div class="scm-node-card-sub">Metro Line 1 · Navi Mumbai Core</div><span class="scm-node-badge badge-op">Operational</span></div>
+                <div class="scm-node-card" onclick="focusNetwork2([18.878,72.943],13)"><div class="scm-node-card-title">🚆 Uran Rail</div><div class="scm-node-card-sub">Uran–Belapur Commuter Rail</div><span class="scm-node-badge badge-op">Operational</span></div>
+                <div class="scm-node-card" onclick="focusNetwork2([19.220,72.975],12)"><div class="scm-node-card-title">🏙️ Thane</div><div class="scm-node-card-sub">Commercial & Business District</div><span class="scm-node-badge badge-op">Operational</span></div>
+                <div class="scm-node-card" onclick="focusNetwork2([19.280,73.060],12)"><div class="scm-node-card-title">🏭 Bhiwandi</div><div class="scm-node-card-sub">Warehousing · Logistics · Industrial</div><span class="scm-node-badge badge-op">Operational</span></div>
+                <div class="scm-node-card" onclick="focusNetwork2([19.240,73.130],12)"><div class="scm-node-card-title">🏘️ Kalyan</div><div class="scm-node-card-sub">Residential & Industrial Hub</div><span class="scm-node-badge badge-op">Operational</span></div>
+                <div class="scm-node-card" onclick="focusNetwork2([19.380,72.840],12)"><div class="scm-node-card-title">🚉 Virar</div><div class="scm-node-card-sub">Northern MMR Gateway</div><span class="scm-node-badge badge-uc">Under Construction</span></div>
+            </div>
+        </div>
+        <div class="scm-bottom">
+            <div class="scm-matrix-panel">
+                <h3>Econectivity Matrix</h3>
+                <table class="econn-table">
+                    <thead><tr><th>From</th><th>To</th><th>Via</th><th>Mode</th><th>Time / Role</th></tr></thead>
+                    <tbody>
+                        <tr><td>Core Mumbai</td><td>Navi Mumbai</td><td>MTHL (Atal Setu)</td><td>🚗</td><td>10–15 min</td></tr>
+                        <tr><td>Navi Mumbai</td><td>Panvel</td><td>Sion–Panvel Hwy</td><td>🚗</td><td>20–30 min</td></tr>
+                        <tr><td>Panvel</td><td>NMIA</td><td>Metro Line 8</td><td>🚇</td><td>15–20 min</td></tr>
+                        <tr><td>Panvel</td><td>Pune</td><td>Mumbai–Pune Exp.</td><td>🚗</td><td>1.5–2 hrs</td></tr>
+                        <tr><td>Core Mumbai</td><td>Thane</td><td>Metro 4 / EEH / Rail</td><td>🚇</td><td>30–40 min</td></tr>
+                        <tr><td>Thane</td><td>Bhiwandi</td><td>Metro 5 / Rail</td><td>🚇</td><td>20–25 min</td></tr>
+                        <tr><td>Virar</td><td>Alibaug</td><td>Virar–Alibaug Corr.</td><td>🚌</td><td>2–2.5 hrs</td></tr>
+                        <tr><td>JNPT</td><td>Pune/Delhi</td><td>DFC + Expressways</td><td>🚛</td><td>Cargo Route</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="scm-mega-panel">
+                <h3>Mega Projects Snapshot</h3>
+                <div class="mega-item"><div class="mega-icon">🌉</div><div><div class="mega-item-label">Atal Setu (MTHL)</div><div class="mega-item-detail"><strong>21.8 km</strong> | 2024 Open | ₹17,840 Cr</div></div></div>
+                <div class="mega-item"><div class="mega-icon">🛣️</div><div><div class="mega-item-label">Coastal Road</div><div class="mega-item-detail"><strong>29.4 km</strong> | 2024–2025 Phased</div></div></div>
+                <div class="mega-item"><div class="mega-icon">🚇</div><div><div class="mega-item-label">Metro Line 8 (BKC–NMIA)</div><div class="mega-item-detail"><strong>35.1 km</strong> | 2025–2026</div></div></div>
+                <div class="mega-item"><div class="mega-icon">🚇</div><div><div class="mega-item-label">Metro Line 5</div><div class="mega-item-detail"><strong>24.9 km</strong> | 2027–2028</div></div></div>
+                <div class="mega-item"><div class="mega-icon">✈️</div><div><div class="mega-item-label">NMIA (Ulwe)</div><div class="mega-item-detail">Phase: <strong>2025–2026</strong> | Full Ops: 2028</div></div></div>
+                <div class="mega-item"><div class="mega-icon">🚌</div><div><div class="mega-item-label">Virar–Alibaug Corridor</div><div class="mega-item-detail"><strong>120 km</strong> | 2026–2028</div></div></div>
+            </div>
+            <div class="scm-takeaway-panel">
+                <h3>Key Takeaways for Clients</h3>
+                <div class="takeaway-item"><div class="takeaway-dot" style="background:#3b82f6;"></div><div class="takeaway-text">Mumbai 3.0 will create <strong>7–10 new growth corridors</strong> across MMR.</div></div>
+                <div class="takeaway-item"><div class="takeaway-dot" style="background:#06b6d4;"></div><div class="takeaway-text"><strong>Navi Mumbai – Panvel – NMIA</strong> will be the next economic engine.</div></div>
+                <div class="takeaway-item"><div class="takeaway-dot" style="background:#f59e0b;"></div><div class="takeaway-text"><strong>Bhiwandi–Kalyan belt</strong> will be India's largest logistics hub by 2028.</div></div>
+                <div class="takeaway-item"><div class="takeaway-dot" style="background:#16a34a;"></div><div class="takeaway-text"><strong>Virar to Alibaug</strong> will unlock western MMR growth potential.</div></div>
+                <div class="takeaway-item"><div class="takeaway-dot" style="background:#ef4444;"></div><div class="takeaway-text">Appreciation expected in <strong>Panvel, Ulwe, Dronagiri, Kharghar, Thane, Bhiwandi, Virar</strong>.</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- TAB 3: FULL STRATEGIC INTELLIGENCE REPORT -->
+<div class="tab-panel" id="panel-matrix">
+    <div class="matrix-topbar">
+        <div>
+            <div class="matrix-topbar-title">Mumbai <span>3.0</span> — Strategic Connectivity Matrix</div>
+            <div class="matrix-topbar-sub">Building a Multi-Polar, Integrated, Global Mumbai Region · 324.40 Sq. Km KSC Boundary</div>
+        </div>
+        <div class="matrix-topbar-tag">Logistics + Infrastructure + Real Estate = The Biggest Opportunity Zone</div>
+    </div>
+    <div class="matrix-filter-bar">
+        <button class="filter-btn active" onclick="filterMatrix('all',this)">All Systems</button>
+        <button class="filter-btn" onclick="filterMatrix('operational',this)">Operational</button>
+        <button class="filter-btn" onclick="filterMatrix('construction',this)">Under Construction</button>
+        <button class="filter-btn" onclick="filterMatrix('planned',this)">Planned</button>
+        <button class="filter-btn" onclick="filterMatrix('highway',this)">Highways</button>
+        <button class="filter-btn" onclick="filterMatrix('rail',this)">Rail</button>
+        <button class="filter-btn" onclick="filterMatrix('metro',this)">Metro</button>
+    </div>
+    <div class="matrix-map-container">
+        <div id="map3"></div>
+        <div class="map3-legend">
+            <div class="map3-legend-title">🗺️ Map Legend</div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#e53e3e;"></div><span class="map3-legend-text">MTHL – Atal Setu</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#7f1d1d;"></div><span class="map3-legend-text">Mumbai–Pune Expressway</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#3182ce;"></div><span class="map3-legend-text">Coastal Road</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#38a169;"></div><span class="map3-legend-text">Western Express Hwy</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-dash" style="border-color:#ed8936;"></div><span class="map3-legend-text">Virar–Alibaug Corridor</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#d69e2e;"></div><span class="map3-legend-text">Metro Line 4</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#9f7aea;"></div><span class="map3-legend-text">Metro Line 5</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#db2777;"></div><span class="map3-legend-text">Metro Line 1</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#f59e0b;"></div><span class="map3-legend-text">Metro Line 8 (BKC–NMIA)</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#16a34a;"></div><span class="map3-legend-text">Uran–Belapur Rail</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#744210;"></div><span class="map3-legend-text">Central Railway</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-dash" style="border-color:#7c3aed;"></div><span class="map3-legend-text">DFC Freight Corridor</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-line" style="background:#92400e;"></div><span class="map3-legend-text">Konkan Railway</span></div>
+            <div class="map3-legend-item"><div class="map3-legend-dash" style="border-color:#2563eb;"></div><span class="map3-legend-text">NH-66 Mumbai–Goa Exp.</span></div>
+        </div>
+    </div>
+    <div class="matrix-scroll" id="matrixBody">
+        <div class="summary-row">
+            <div class="summary-chip"><div class="chip-val">17</div><div class="chip-lbl">Total Corridors</div></div>
+            <div class="summary-chip"><div class="chip-val" style="color:#4ade80;">7</div><div class="chip-lbl">Operational</div></div>
+            <div class="summary-chip"><div class="chip-val" style="color:#fb923c;">5</div><div class="chip-lbl">Under Construction</div></div>
+            <div class="summary-chip"><div class="chip-val" style="color:#60a5fa;">5</div><div class="chip-lbl">Planned</div></div>
+            <div class="summary-chip"><div class="chip-val">324</div><div class="chip-lbl">Sq. Km Zone</div></div>
+            <div class="summary-chip"><div class="chip-val">246</div><div class="chip-lbl">km Metro Lines</div></div>
+            <div class="summary-chip"><div class="chip-val">700+</div><div class="chip-lbl">km Highways</div></div>
+            <div class="summary-chip"><div class="chip-val">20+</div><div class="chip-lbl">Logistics Parks (Planned)</div></div>
+        </div>
+        <div class="report-grid-2">
+            <div class="report-card">
+                <h4>1. Executive Snapshot</h4>
+                <div class="exec-item">Mumbai 3.0 is the shift from island city to a <strong>multi-nodal, multi-modal metropolitan region</strong>.</div>
+                <div class="exec-item">Key growth driven by infra, industry, logistics, aviation and urban expansion.</div>
+                <div class="exec-item">Core growth corridor: <strong>Virar – Thane – Navi Mumbai – Panvel – Pune</strong>.</div>
+                <div class="exec-item">Major nodes: Thane, Kalyan, Bhiwandi, Panvel, Navi Mumbai, Virar, Alibaug, Pune Corridor.</div>
+                <div class="exec-item">Key sectors: Real Estate, Logistics, Manufacturing, IT/ITeS, Aerospace, Port-led Trade, Tourism.</div>
+                <div class="exec-item">Population of MMR expected to reach <strong>28–30 million by 2041</strong>.</div>
+            </div>
+            <div class="report-card">
+                <h4>2. Mumbai 3.0 Concept</h4>
+                <div class="concept-row"><span class="concept-label">What</span><span class="concept-val">Evolution from 'Maximum City' to 'Metropolitan Region Economy'</span></div>
+                <div class="concept-row"><span class="concept-label">Why</span><span class="concept-val">Decongestion, land availability, industry shift, logistics efficiency, global competitiveness</span></div>
+                <div class="concept-row"><span class="concept-label">How</span><span class="concept-val">Integrated infra (metro, rail, roads, ports, airport, logistics parks, industrial corridors)</span></div>
+                <div class="concept-row"><span class="concept-label">Outcome</span><span class="concept-val">Multiple CBDs, distributed growth, higher productivity, global investment magnet</span></div>
+            </div>
+        </div>
+        <div class="report-grid-2">
+            <div class="report-card">
+                <h4>3. Strategic Connectivity Matrix (Overview)</h4>
+                <table class="corridor-mini-table">
+                    <thead><tr><th>Corridor</th><th>Connects</th><th>Key Infrastructure</th></tr></thead>
+                    <tbody>
+                        <tr><td>Western Corridor</td><td>Virar–Thane–BKC–South Mumbai</td><td>Western Railway, Metro 2A, Coastal Road</td></tr>
+                        <tr><td>Central Corridor</td><td>Thane–Bhiwandi–Kalyan</td><td>Metro 5, Central Railway, DFC (Freight)</td></tr>
+                        <tr><td>Harbour Corridor</td><td>Mumbai–Navi Mumbai</td><td>MTHL, Trans Harbour Rail (Proposed)</td></tr>
+                        <tr><td>Aero-Logistics</td><td>Navi Mumbai–NMIA–Panvel–JNPT</td><td>NMIA, Metro 8, Port Connectors, Freight</td></tr>
+                        <tr><td>Pune Corridor</td><td>Panvel – Pune</td><td>Mumbai–Pune Expressway, Missing Link, NH-48</td></tr>
+                        <tr><td>Coastal Corridor</td><td>Virar – Alibaug</td><td>Virar–Alibaug Multimodal Corridor (Proposed)</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="report-card">
+                <h4>4. Infrastructure At A Glance (Summary)</h4>
+                <div class="infra-item"><span class="infra-icon">🚇</span><span class="infra-label">Metro Lines (Operational + Under Construction)</span><span class="infra-val">~246 km</span></div>
+                <div class="infra-item"><span class="infra-icon">🛣️</span><span class="infra-label">Highways & Expressways (Existing + Under Const.)</span><span class="infra-val">~700 km+</span></div>
+                <div class="infra-item"><span class="infra-icon">🚆</span><span class="infra-label">Rail Network (Suburban + Freight + High Speed)</span><span class="infra-val">~1,100 km+</span></div>
+                <div class="infra-item"><span class="infra-icon">✈️</span><span class="infra-label">Airports</span><span class="infra-val">2 Op. + 1 Upcoming</span></div>
+                <div class="infra-item"><span class="infra-icon">⚓</span><span class="infra-label">Major Ports</span><span class="infra-val">2 Major + 1 Minor</span></div>
+                <div class="infra-item"><span class="infra-icon">🏭</span><span class="infra-label">Logistics Parks (Planned)</span><span class="infra-val">20+</span></div>
+                <div class="infra-item"><span class="infra-icon">💰</span><span class="infra-label">Investment Planned (MMR Infra Pipeline)</span><span class="infra-val">₹8–10 Lakh Cr+</span></div>
+            </div>
+        </div>
+        <div class="report-section-title" data-category="aviation">✈️ Aviation Infrastructure</div>
+        <table class="dark-table" data-category="aviation">
+            <thead><tr><th>Node / Corridor</th><th>Type</th><th>Status</th><th>Capacity / Scale</th><th>Strategic Role</th></tr></thead>
+            <tbody>
+                <tr data-status="construction" data-modal="aviation"><td><span class="color-dot" style="background:#38bdf8;"></span>Navi Mumbai Intl. Airport (NMIA)</td><td>Greenfield Airport</td><td><span class="m-badge construction">Under Const</span></td><td>4 Terminals · 60M PAX/yr</td><td>Aerotropolis Anchor / MMR Decongestion</td></tr>
+            </tbody>
+        </table>
+        <div class="report-section-title" data-category="maritime">⚓ Maritime Gateways</div>
+        <table class="dark-table" data-category="maritime">
+            <thead><tr><th>Node / Corridor</th><th>Type</th><th>Status</th><th>Capacity / Scale</th><th>Strategic Role</th></tr></thead>
+            <tbody>
+                <tr data-status="operational" data-modal="maritime"><td><span class="color-dot" style="background:#0ea5e9;"></span>JNPT Container Port Complex</td><td>Mega Container Port</td><td><span class="m-badge operational">Operational</span></td><td>10M TEU/yr Capacity</td><td>Primary Intl. Cargo Gateway</td></tr>
+            </tbody>
+        </table>
+        <div class="report-section-title" data-category="highway">🛣️ Highways & Expressways</div>
+        <table class="dark-table" data-category="highway">
+            <thead><tr><th>Corridor Name</th><th>Type</th><th>Status</th><th>Length / Lanes</th><th>Strategic Role</th></tr></thead>
+            <tbody>
+                <tr data-status="operational" data-modal="highway"><td><span class="color-dot" style="background:#dc2626;"></span>Atal Setu Link (MTHL Freeway)</td><td>Sea Bridge / Freeway</td><td><span class="m-badge operational">Operational</span></td><td>21.8 Km · 6 Lanes</td><td>Mumbai–Navi Mumbai Trans-Harbour Link</td></tr>
+                <tr data-status="operational" data-modal="highway"><td><span class="color-dot" style="background:#b91c1c;"></span>JNPT Corridor (NH-348 / 348A)</td><td>National Highway</td><td><span class="m-badge operational">Operational</span></td><td>~30 Km · 4–6 Lanes</td><td>Port Freight Pipeline Axis</td></tr>
+                <tr data-status="operational" data-modal="highway"><td><span class="color-dot" style="background:#b91c1c;"></span>National Highway 48 (NH-48)</td><td>National Highway</td><td><span class="m-badge operational">Operational</span></td><td>Arterial Trunk · 6 Lanes</td><td>Continental Logistics Carrier Spine</td></tr>
+                <tr data-status="operational" data-modal="highway"><td><span class="color-dot" style="background:#7f1d1d;"></span>Mumbai–Pune Expressway</td><td>Expressway</td><td><span class="m-badge operational">Operational</span></td><td>94.5 Km · 6 Lanes</td><td>Eastern Boundary High-Speed Spine</td></tr>
+                <tr data-status="construction" data-modal="highway"><td><span class="color-dot" style="background:#ea580c;"></span>Virar–Alibaug Multi-Modal Highway</td><td>Multi-Modal Corridor</td><td><span class="m-badge construction">Under Const</span></td><td>~126 Km · 8 Lanes</td><td>Outer Ring Logistics Expressway</td></tr>
+                <tr data-status="planned" data-modal="highway"><td><span class="color-dot" style="background:#2563eb;"></span>Mumbai–Goa Expressway (NH-66)</td><td>National Highway</td><td><span class="m-badge planned">Planned</span></td><td>~105 Km Southern Stretch</td><td>Coastal Southern Connectivity Route</td></tr>
+            </tbody>
+        </table>
+        <div class="report-section-title" data-category="metro">🚇 Metro Rail Systems</div>
+        <table class="dark-table" data-category="metro">
+            <thead><tr><th>Line / Corridor</th><th>Type</th><th>Status</th><th>Length / Stations</th><th>Strategic Role</th></tr></thead>
+            <tbody>
+                <tr data-status="operational" data-modal="metro"><td><span class="color-dot" style="background:#db2777;"></span>Belapur–Pendhar Metro Line 1</td><td>Urban Metro Rail</td><td><span class="m-badge operational">Operational</span></td><td>~11 Km · 11 Stations</td><td>CBD Urban Mass Commuter Spine</td></tr>
+                <tr data-status="construction" data-modal="metro"><td><span class="color-dot" style="background:#f59e0b;"></span>Metro Line 8 — BKC to NMIA</td><td>Airport Metro</td><td><span class="m-badge construction">Under Const</span></td><td>~35.1 Km · Airport Connector</td><td>BKC–Navi Mumbai–NMIA Airport Transit</td></tr>
+                <tr data-status="planned" data-modal="metro"><td><span class="color-dot" style="background:#2563eb;"></span>MTHL Cross-Harbour Metro</td><td>Metro Spur</td><td><span class="m-badge planned">Planned</span></td><td>East–West Cross Link</td><td>Trans-Harbour Mass Rapid Connector</td></tr>
+            </tbody>
+        </table>
+        <div class="report-section-title" data-category="railway">🚆 Suburban Railways & Freight</div>
+        <table class="dark-table" data-category="railway">
+            <thead><tr><th>Corridor Name</th><th>Type</th><th>Status</th><th>Length / Track</th><th>Strategic Role</th></tr></thead>
+            <tbody>
+                <tr data-status="operational" data-modal="rail"><td><span class="color-dot" style="background:#16a34a;"></span>Uran–Belapur Commuter Rail</td><td>Suburban Rail</td><td><span class="m-badge operational">Operational</span></td><td>~26 Km · Single Track</td><td>Passenger Feeder Loop Corridor</td></tr>
+                <tr data-status="construction" data-modal="rail"><td><span class="color-dot" style="background:#ea580c;"></span>Panvel–Karjat Double Track</td><td>Rail Expansion</td><td><span class="m-badge construction">Under Const</span></td><td>~30 Km · Double Track</td><td>Suburban Feeder Capacity Doubling</td></tr>
+                <tr data-status="planned" data-modal="rail"><td><span class="color-dot" style="background:#7c3aed;"></span>Panvel–Uran DFC Cargo Link</td><td>Freight Railway</td><td><span class="m-badge planned">Planned</span></td><td>~35 Km Freight Spine</td><td>Dedicated Cargo–Port Freight Corridor</td></tr>
+            </tbody>
+        </table>
+        <div class="report-section-title">6. Major Infrastructure Projects — Detailed Intelligence</div>
+        <table class="projects-table">
+            <thead><tr><th>Project</th><th>Route / Alignment</th><th>Connects</th><th>Status (2025)</th><th>Official Completion</th><th>Realistic Completion</th><th>Budget (₹ Cr)</th><th>Progress %</th></tr></thead>
+            <tbody>
+                <tr><td>Metro Line 8 (BKC–NMIA)</td><td>BKC–Navi Mumbai–NMIA</td><td>Mumbai–Navi Mumbai–Airport</td><td><span class="m-badge construction">Civil work in progress</span></td><td>Dec 2026</td><td>2027</td><td>33,480</td><td><div style="display:flex;align-items:center;"><div class="prog-bar"><div class="prog-fill" style="width:45%;background:#f59e0b;"></div></div><span class="prog-val">45%</span></div></td></tr>
+                <tr><td>Metro Line 4 (Wadala–Kasarvadavali)</td><td>Wadala–Thane–Kasarvadavali</td><td>Mumbai–Thane–Ghodbunder</td><td><span class="m-badge construction">Civil work in progress</span></td><td>Dec 2025</td><td>Mid 2026</td><td>15,865</td><td><div style="display:flex;align-items:center;"><div class="prog-bar"><div class="prog-fill" style="width:75%;background:#f59e0b;"></div></div><span class="prog-val">75%</span></div></td></tr>
+                <tr><td>Metro Line 5 (Thane–Bhiwandi–Kalyan)</td><td>Thane–Bhiwandi–Kalyan</td><td>Thane–Bhiwandi–Kalyan</td><td><span class="m-badge construction">Civil work in progress</span></td><td>Dec 2026</td><td>2027</td><td>17,633</td><td><div style="display:flex;align-items:center;"><div class="prog-bar"><div class="prog-fill" style="width:55%;background:#f59e0b;"></div></div><span class="prog-val">55%</span></div></td></tr>
+                <tr><td>Mumbai Trans Harbour Link (MTHL)</td><td>Sewri–Nhava Sheva</td><td>Mumbai–Navi Mumbai</td><td><span class="m-badge operational">Operational</span></td><td>Jun 2024</td><td>Completed</td><td>17,840</td><td><div style="display:flex;align-items:center;"><div class="prog-bar"><div class="prog-fill" style="width:100%;background:#4ade80;"></div></div><span class="prog-val">100%</span></div></td></tr>
+                <tr><td>Navi Mumbai International Airport (NMIA)</td><td>Ulwe / Panvel Region</td><td>Navi Mumbai–Global Destinations</td><td><span class="m-badge construction">Site work in progress</span></td><td>Dec 2024*</td><td>2025–26</td><td>19,650</td><td><div style="display:flex;align-items:center;"><div class="prog-bar"><div class="prog-fill" style="width:60%;background:#f59e0b;"></div></div><span class="prog-val">60%</span></div></td></tr>
+                <tr><td>Virar–Alibaug Multimodal Corridor</td><td>Virar–Palghar–Alibaug</td><td>Western MMR–Raigad Coast</td><td><span class="m-badge planned">DPR Under Preparation</span></td><td>2030+</td><td>2030+</td><td>Est. 40,000+</td><td><div style="display:flex;align-items:center;"><div class="prog-bar"><div class="prog-fill" style="width:5%;background:#60a5fa;"></div></div><span class="prog-val">5%</span></div></td></tr>
+                <tr><td>Mumbai–Pune Expressway (Missing Link)</td><td>Panvel–Talegaon</td><td>Mumbai–Pune</td><td><span class="m-badge construction">Civil work in progress</span></td><td>Dec 2025</td><td>2026</td><td>2,950</td><td><div style="display:flex;align-items:center;"><div class="prog-bar"><div class="prog-fill" style="width:70%;background:#f59e0b;"></div></div><span class="prog-val">70%</span></div></td></tr>
+                <tr><td>JNPT Port Connectivity (Various Projects)</td><td>JNPT–NH-348A/Sion–Panvel Highway</td><td>JNPT–Hinterland</td><td><span class="m-badge operational">Ongoing</span></td><td>2025–26</td><td>2026–27</td><td>6,200</td><td><div style="display:flex;align-items:center;"><div class="prog-bar"><div class="prog-fill" style="width:60%;background:#f59e0b;"></div></div><span class="prog-val">60%</span></div></td></tr>
+                <tr><td>Dedicated Freight Corridor (Western DFC)</td><td>Dadri–JNPT</td><td>North India–JNPT Freight</td><td><span class="m-badge operational">Operations</span></td><td>Operational</td><td>Completed</td><td>—</td><td><div style="display:flex;align-items:center;"><div class="prog-bar"><div class="prog-fill" style="width:100%;background:#4ade80;"></div></div><span class="prog-val">100%</span></div></td></tr>
+            </tbody>
+        </table>
+        <div class="report-grid-2">
+            <div class="report-card">
+                <h4>7. Connectivity & Growth Impact</h4>
+                <table class="growth-table">
+                    <thead><tr><th>Area / Corridor</th><th>Key Connectivity</th><th>Growth Sectors</th></tr></thead>
+                    <tbody>
+                        <tr><td>Thane–Bhiwandi–Kalyan</td><td>Metro 5, Rail, DFC</td><td>Logistics, Warehousing, Affordable Housing</td></tr>
+                        <tr><td>Navi Mumbai–NMIA</td><td>MTHL, Metro 8, NMIA</td><td>Commerce, IT, Hospitality, Aviation Retail</td></tr>
+                        <tr><td>Panvel–Pune Corridor</td><td>Expressway, Rail, Freight</td><td>Industrial, Logistics, Data Centers</td></tr>
+                        <tr><td>Alibaug–Coastal Belt</td><td>Coastal Road, Ferry, Tourism</td><td>Coastal Tourism, Second Homes, Villas</td></tr>
+                        <tr><td>JNPT–NMIA Corridor</td><td>Port, Airport, Expressway</td><td>Aero-logistics, Cargo, Manufacturing</td></tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="report-card">
+                <h4>8. Ground Reality Check</h4>
+                <div class="reality-item">MTHL opened June 2024 — travel time reduced from 2 hrs to 20 mins.</div>
+                <div class="reality-item">Metro Line 8 (BKC–NMIA) under construction — direct airport connectivity by 2027.</div>
+                <div class="reality-item">Metro Line 4 civil work ~75% complete; delays in station fit-outs.</div>
+                <div class="reality-item">NMIA on track for Phase 1 (2025–26); commercial viability strong.</div>
+                <div class="reality-item">Land acquisition delays continue in Virar–Alibaug corridor.</div>
+                <div class="reality-item">JNPT road congestion improving but last-mile connectivity needs acceleration.</div>
+                <div class="reality-item">Real estate absorption highest in Panvel, Kharghar, Thane, Dombivli.</div>
+            </div>
+        </div>
+        <div class="report-grid-3">
+            <div class="report-card">
+                <h4>10. Top Future Hotspots</h4>
+                <div class="hotspot-category"><div class="hotspot-cat-title"><span class="cat-icon">🏢</span> Commercial</div><div class="hotspot-items"><span class="hotspot-tag">BKC 2.0 (Navi Mumbai)</span><span class="hotspot-tag">Relapur</span><span class="hotspot-tag">Thane Ghodbunder Road</span><span class="hotspot-tag">Panvel Airport Influence Zone</span></div></div>
+                <div class="hotspot-category"><div class="hotspot-cat-title"><span class="cat-icon">🏭</span> Logistics</div><div class="hotspot-items"><span class="hotspot-tag">Bhiwandi</span><span class="hotspot-tag">Dronagiri</span><span class="hotspot-tag">JNPT</span><span class="hotspot-tag">Taloja</span><span class="hotspot-tag">Palghar</span><span class="hotspot-tag">Panvel</span></div></div>
+                <div class="hotspot-category"><div class="hotspot-cat-title"><span class="cat-icon">🏘️</span> Residential</div><div class="hotspot-items"><span class="hotspot-tag">Kharghar</span><span class="hotspot-tag">Panvel</span><span class="hotspot-tag">Dombivli</span><span class="hotspot-tag">Ulwe</span><span class="hotspot-tag">Taloja</span><span class="hotspot-tag">Vasai–Virar</span></div></div>
+            </div>
+            <div class="report-card">
+                <h4>11. Investment & Real Estate Impact</h4>
+                <div class="invest-point">Infrastructure-led appreciation <strong>highest in Panvel, Kharghar, Ulwe, Thane, Neral</strong>.</div>
+                <div class="invest-point">Rental demand rising near metro corridors and industrial hubs.</div>
+                <div class="invest-point">Office absorption shifting from South Mumbai to <strong>Navi Mumbai & Thane</strong>.</div>
+                <div class="invest-point">Warehousing demand strong along <strong>Bhiwandi–Kalyan and Panvel belt</strong>.</div>
+                <div class="invest-point">Second home market to grow on <strong>Virar–Alibaug coastal belt</strong>.</div>
+                <div class="invest-point">Logistics parks near JNPT seeing <strong>200–300% appreciation potential</strong> over 10 yrs.</div>
+                <div class="invest-point">NMIA aerotropolis zone (Ulwe/Dronagiri) becoming hottest commercial land play.</div>
+            </div>
+            <div class="report-card">
+                <h4>12. Key Takeaways for Clients</h4>
+                <div class="key-takeaway"><div class="kt-num">1</div><div class="kt-text">Mumbai 3.0 is not a single city story; it is a <strong>region-wide transformation</strong>.</div></div>
+                <div class="key-takeaway"><div class="kt-num">2</div><div class="kt-text"><strong>Connectivity is the biggest value creator</strong> over next 10–15 years.</div></div>
+                <div class="key-takeaway"><div class="kt-num">3</div><div class="kt-text">Early movers in <strong>Panvel, Navi Mumbai, Ulwe, Thane, Bhiwandi</strong> will benefit the most.</div></div>
+                <div class="key-takeaway"><div class="kt-num">4</div><div class="kt-text"><strong>Logistics + Infrastructure + Real Estate = The biggest opportunity zone</strong> in India right now.</div></div>
+                <div class="key-takeaway"><div class="kt-num">5</div><div class="kt-text">Population growth to <strong>28–30 million by 2041</strong> will drive sustained demand across all asset classes.</div></div>
+                <div class="key-takeaway"><div class="kt-num">6</div><div class="kt-text">Infrastructure timelines have improved — <strong>80% of projects on revised track</strong> as of 2025.</div></div>
+                <div class="key-takeaway"><div class="kt-num">7</div><div class="kt-text">NMIA opening will <strong>redefine the aerotropolis economy</strong> of western India permanently.</div></div>
+            </div>
+        </div>
+    </div>
+</div>
+
+</div>
+
+<script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+<script>
+// ===== DISTRICT DATA =====
+const districtData = {
+  panvel: {
+    name: "Panvel", emoji: "🏙️",
+    subtitle: "Emerging Nucleus of 3rd Mumbai — CIDCO's Crown Jewel",
+    badge: "NAINA · CIDCO Strategic Hub",
+    color: "#0284c7",
+    stats: [{val:"~60M",lbl:"NMIA Capacity PAX/yr"},{val:"20 Min",lbl:"To South Mumbai via MTHL"},{val:"₹19,650Cr",lbl:"NMIA Investment"},{val:"2025-26",lbl:"NMIA Phase 1"}],
+    overview: `Panvel is emerging as the nucleus of the 3rd Mumbai — a new mega urban region strategically developed by CIDCO, driven by robust infrastructure and exponential demand. Positioned at the crossroads of the Mumbai-Pune corridor and the upcoming NMIA, Panvel is transforming into Mumbai's most connected hub with world-class infrastructure, planned urban ecosystems, and unmatched investor appeal.`,
+    railway: [
+      {name:"Panvel Railway Station",from:"Panvel",to:"Mumbai CST / Belapur / Uran",status:"op",note:"Central Railway suburban hub — daily commuter spine"},
+      {name:"Panvel–Karjat Double Track",from:"Panvel",to:"Karjat / Neral",status:"uc",note:"Suburban rail expansion — doubling capacity"},
+      {name:"Panvel–Uran DFC Cargo Link",from:"Panvel",to:"JNPT / Uran",status:"pl",note:"Dedicated freight corridor for port cargo"},
+    ],
+    metro: [
+      {name:"Metro Line 8 (BKC–NMIA)",from:"BKC Mumbai",to:"NMIA via Navi Mumbai",status:"uc",note:"35.1 km direct airport metro connection — game changer"},
+      {name:"NAINA Metro Commuter Link",from:"Panvel",to:"NMIA Airport",status:"uc",note:"Suburban nodes to airport rapid link"},
+    ],
+    highways: [
+      {name:"Mumbai–Pune Expressway",from:"Panvel",to:"Pune",status:"op",note:"94.5 km · 6 lanes · 1.5–2 hrs to Pune"},
+      {name:"NH-348 / NH-348A",from:"Panvel",to:"JNPT Port",status:"op",note:"Arterial port freight pipeline"},
+      {name:"Sion–Panvel Highway",from:"Mumbai",to:"Panvel",status:"op",note:"Primary road link to Mumbai"},
+      {name:"Mumbai–Goa Expressway (NH-66)",from:"Panvel",to:"Goa / Alibaug",status:"pl",note:"Planned coastal southern connectivity"},
+    ],
+    airports: [{name:"NMIA — Navi Mumbai Intl. Airport",dist:"~15 km",status:"uc",note:"Phase 1 ops 2025–26 · 4 terminals · 60M PAX/yr"}],
+    ports: [{name:"JNPT — Jawaharlal Nehru Port",dist:"~20 km",status:"op",note:"India's largest container port · 10M TEU/yr"}],
+    majorProjects: [
+      {name:"NMIA Aerotropolis",icon:"✈️",detail:"Navi Mumbai International Airport — Phase 1 by 2025–26, Full operations 2028. 4 terminals, 60M PAX/yr capacity. ₹19,650 Cr investment."},
+      {name:"MTHL — Atal Setu Sea Link",icon:"🌉",detail:"Trans-harbour 6-lane bridge. Panvel to South Mumbai in 20 minutes. Opened Jan 2024. ₹17,840 Cr."},
+      {name:"Mumbai Multi-Modal Corridor",icon:"🛣️",detail:"Integrated logistics & transport corridor linking Panvel to all major nodes of MMR."},
+      {name:"Mumbai–Pune Expressway Missing Link",icon:"🛣️",detail:"Panvel–Talegaon section under construction. 70% complete. Completion: 2026."},
+      {name:"Metro Line 8 (BKC–Airport)",icon:"🚇",detail:"35.1 km metro from BKC to NMIA via Navi Mumbai. Under construction. Transforms connectivity."},
+    ],
+    futurePlans: [
+      {name:"Panvel Smart City Node",icon:"🏙️",detail:"CIDCO-planned urban ecosystem with wide roads, smart infrastructure, green spaces and planned residential sectors."},
+      {name:"Medi City / Healthcare Hub",icon:"🏥",detail:"Planned medical & healthcare institution cluster near NMIA influence zone — hospitals, research, wellness."},
+      {name:"EduCity — Education Hub",icon:"🎓",detail:"Upcoming education cluster with international schools, engineering colleges, and research institutions."},
+      {name:"Data Center Zone",icon:"💻",detail:"Panvel–NH48 corridor earmarked for data center parks driven by power availability and highway access."},
+      {name:"Mumbai–Goa Expressway",icon:"🛣️",detail:"Proposed NH-66 coastal expressway connecting Panvel south — unlocking Pen, Alibaug coastal belt."},
+    ],
+    investor: [
+      {icon:"💰",label:"Rental Yield Potential",detail:"Strong demand from airport staff, IT professionals, logistics workforce near NMIA. Rental appreciation of 15–25% expected post-airport opening."},
+      {icon:"🏙️",label:"Planned Urban Ecosystem",detail:"CIDCO-designed wide roads, underground utilities, smart infrastructure. Fully planned layout unlike organic settlements."},
+      {icon:"🌿",label:"Green & Clean Living",detail:"Surrounded by Sahyadri hills, Matheran forests, Amba river and clean air corridors — rare near a metro airport zone."},
+      {icon:"🏥",label:"Upcoming Healthcare & Education",detail:"Planned Medi City, international schools, and engineering/management institutions in pipeline near Panvel node."},
+      {icon:"📈",label:"Appreciation Track Record",detail:"Land rates in Panvel grew 40–60% post-MTHL announcement. Post-NMIA opening, further 2–3x appreciation projected."},
+      {icon:"🏭",label:"Logistics & Industrial Demand",detail:"Proximity to JNPT, NMIA and expressways makes Panvel a Grade-A logistics park destination."},
+    ]
+  },
+  ulwe: {
+    name: "Ulwe", emoji: "✈️",
+    subtitle: "The Aerotropolis Frontier — Airport Doorstep Investment Zone",
+    badge: "NAINA · Aero-Logistics District",
+    color: "#06b6d4",
+    stats: [{val:"<5 km",lbl:"Distance to NMIA"},{val:"₹19,650Cr",lbl:"Airport Investment"},{val:"60M",lbl:"PAX/yr Capacity"},{val:"2025-26",lbl:"Phase 1 Ops"}],
+    overview: `Ulwe is the district sitting literally at the doorstep of Navi Mumbai International Airport (NMIA). As the aerotropolis frontier, it offers the closest residential and commercial land to the airport. CIDCO has planned Ulwe as a fully master-planned node with Sector-based development, wide roads, and complete infrastructure — making it one of India's most exciting real estate investment destinations.`,
+    railway: [
+      {name:"Uran–Belapur Rail Line",from:"Uran",to:"Belapur / CBD",status:"op",note:"Passes through Ulwe corridor — commuter rail spine"},
+      {name:"Proposed Ulwe Railway Station",from:"Ulwe",to:"Belapur / Panvel",status:"pl",note:"Planned dedicated station for Ulwe node"},
+    ],
+    metro: [
+      {name:"Metro Line 8 — Ulwe Corridor",from:"Ulwe Node",to:"NMIA / BKC",status:"uc",note:"Direct metro to airport and Mumbai BKC"},
+      {name:"NAINA Airport Metro Link",from:"Ulwe",to:"NMIA Airport",status:"uc",note:"5–8 min to airport by metro"},
+    ],
+    highways: [
+      {name:"Palm Beach Road",from:"Ulwe",to:"Belapur / Kharghar",status:"op",note:"6-lane coastal expressway — Ulwe's primary road"},
+      {name:"Atal Setu Access Road",from:"Ulwe",to:"Mumbai via MTHL",status:"op",note:"Mumbai in 20 min via MTHL interchange"},
+      {name:"NMIA Airport Road",from:"Ulwe",to:"NMIA",status:"uc",note:"Direct 4-lane airport access under construction"},
+    ],
+    airports: [{name:"NMIA — Navi Mumbai Intl. Airport",dist:"<5 km",status:"uc",note:"Phase 1 ops 2025–26. Ulwe is the nearest residential node."}],
+    ports: [{name:"JNPT — Jawaharlal Nehru Port",dist:"~12 km",status:"op",note:"India's largest container port — 12 km from Ulwe"}],
+    majorProjects: [
+      {name:"NMIA Aerotropolis Master Plan",icon:"✈️",detail:"Full aerotropolis development around airport. Ulwe is the core residential and commercial zone. CIDCO master plan."},
+      {name:"Ulwe Node Sector Development",icon:"🏙️",detail:"CIDCO Sector-wise residential, commercial, institutional plotting underway. 30,000+ units planned."},
+      {name:"Palm Beach Road Extension",icon:"🛣️",detail:"Coastal expressway being extended to connect Ulwe with Dronagiri and JNPT logistics corridor."},
+    ],
+    futurePlans: [
+      {name:"Aerotropolis Commercial Zone",icon:"🏢",detail:"Office parks, hotels, convention centres, and aviation MRO facilities around NMIA — Ulwe is the host district."},
+      {name:"Aviation-linked Medi City",icon:"🏥",detail:"Planned medical hub near airport — air ambulance, international patient care, research hospitals."},
+      {name:"EduCity — University Zone",icon:"🎓",detail:"University campus cluster, international schools, and aviation training institutes planned near NMIA."},
+      {name:"Dronagiri–Ulwe Logistics Hub",icon:"🏭",detail:"Aero-logistics parks, cargo handling, cold chain — connecting NMIA and JNPT via coastal road."},
+      {name:"Data Center & Tech Park",icon:"💻",detail:"Power-surplus zone earmarked for hyperscale data centers and IT campuses."},
+    ],
+    investor: [
+      {icon:"✈️",label:"Airport Doorstep Advantage",detail:"Closest residential node to NMIA (<5 km). Airport economy generates massive residential and commercial demand."},
+      {icon:"💰",label:"Rental Yield Potential",detail:"Airport workers, aviation staff, IT/logistics — rental demand surging. Projected 6–8% gross rental yield post-airport opening."},
+      {icon:"🏙️",label:"CIDCO Planned Infrastructure",detail:"Fully master-planned with wide roads, underground utilities, smart grids. Among the best planned nodes in India."},
+      {icon:"🌿",label:"Green & Clean Living",detail:"Waterfront Palm Beach Road, sea views, clean air — premium lifestyle offering rare near an airport zone."},
+      {icon:"📈",label:"Capital Appreciation",detail:"Land rates up 80–120% in last 5 years. Post-NMIA Phase 1 opening, further 3–4x appreciation expected over 10 years."},
+      {icon:"🏥",label:"Healthcare & Education Pipeline",detail:"Medi City, international schools, aviation university all planned. Self-contained urban ecosystem by 2030."},
+    ]
+  },
+  uran: {
+    name: "Uran", emoji: "⚓",
+    subtitle: "Port-Industrial Gateway — JNPT & Dronagiri Logistics Core",
+    badge: "NAINA · Port & Industrial Node",
+    color: "#0ea5e9",
+    stats: [{val:"10M",lbl:"JNPT TEU/yr Capacity"},{val:"~5 km",lbl:"To JNPT Port"},{val:"₹6,200Cr",lbl:"Port Connectivity Invest."},{val:"Planned",lbl:"DFC Cargo Link"}],
+    overview: `Uran is the maritime and industrial powerhouse of NAINA. Home to India's largest container port (JNPT), Uran district anchors the entire logistics and port-trade economy of Mumbai 3.0. The Dronagiri node within Uran is being developed as India's premier port-linked industrial and logistics city, with direct connectivity to NMIA creating a unique air-sea multimodal advantage.`,
+    railway: [
+      {name:"Uran–Belapur Rail Line",from:"Uran",to:"Belapur / CBD / Panvel",status:"op",note:"Primary suburban rail — commuter and cargo feeder"},
+      {name:"Panvel–Uran DFC Cargo Link",from:"Panvel",to:"Uran / JNPT",status:"pl",note:"Dedicated freight corridor planned — port-rail integration"},
+    ],
+    metro: [
+      {name:"Proposed Uran Metro Extension",from:"Uran",to:"Belapur / NMIA",status:"pl",note:"Future metro extension to connect Uran–NMIA–Belapur axis"},
+    ],
+    highways: [
+      {name:"NH-348 / NH-348A",from:"Uran",to:"Mumbai / Panvel",status:"op",note:"Primary port freight pipeline highway"},
+      {name:"JNPT Port Road",from:"JNPT",to:"Nhava Sheva / Expressways",status:"op",note:"Direct port access road — cargo movement axis"},
+      {name:"Palm Beach Road Extension",from:"Uran",to:"Ulwe / NMIA zone",status:"pl",note:"Planned coastal connector south to NMIA corridor"},
+    ],
+    airports: [{name:"NMIA — Navi Mumbai Intl. Airport",dist:"~18 km",status:"uc",note:"Air-sea multimodal — NMIA + JNPT create unique cargo advantage"}],
+    ports: [
+      {name:"JNPT — Jawaharlal Nehru Port",dist:"5 km",status:"op",note:"India's largest container port · 10M TEU/yr · primary trade gateway"},
+      {name:"Nhava Sheva Port Complex",dist:"5 km",status:"op",note:"Part of JNPT ecosystem — multiple berths, dedicated container terminals"},
+    ],
+    majorProjects: [
+      {name:"JNPT Port Expansion",icon:"⚓",detail:"Ongoing port capacity expansion projects. 6,200 Cr investment in connectivity. Multiple new berths and container terminals."},
+      {name:"Dronagiri Node Development",icon:"🏭",detail:"CIDCO's port-linked industrial city. Planned aero-logistics hub, warehousing, manufacturing. Hottest land play in 2025."},
+      {name:"Panvel–Uran DFC",icon:"🚆",detail:"Dedicated freight rail corridor planned to directly link JNPT with Panvel and the national DFC network."},
+    ],
+    futurePlans: [
+      {name:"Dronagiri Logistics City",icon:"🏭",detail:"India's first integrated port-logistics city. Warehousing, cold chain, manufacturing, export processing zones."},
+      {name:"Air-Sea Cargo Hub",icon:"✈️",detail:"NMIA + JNPT multimodal cargo connectivity — planned seamless air-sea cargo transfer facility."},
+      {name:"Coastal Industrial Zone",icon:"⚙️",detail:"Coastal industrial plots for heavy industry, ship repair, petrochemicals and port-linked manufacturing."},
+      {name:"EduCity — Maritime Institute",icon:"🎓",detail:"Planned maritime training institute, port management schools, logistics university campus."},
+    ],
+    investor: [
+      {icon:"⚓",label:"Port-Linked Industrial Demand",detail:"JNPT proximity drives perpetual industrial, warehousing and logistics demand. 200–300% appreciation in logistics parks over 10 years."},
+      {icon:"💰",label:"Rental Yield Potential",detail:"Industrial and logistics leasing — 8–12% yield potential. Port workers, logistics staff create strong residential rental demand."},
+      {icon:"🏙️",label:"Dronagiri Planned City",detail:"CIDCO's Dronagiri master plan is India's most ambitious port-city project. Early land acquisition yields maximum returns."},
+      {icon:"🌿",label:"Coastal Living",detail:"Sea-facing coastal zone with mangrove buffer, clean port-side environment, unique waterfront lifestyle."},
+      {icon:"📈",label:"Land Appreciation",detail:"Dronagiri land rates tripled post-NMIA announcement. Air-sea logistics hub status will drive further exponential growth."},
+    ]
+  },
+  taloja: {
+    name: "Taloja", emoji: "🏭",
+    subtitle: "Industrial-Residential Powerhouse — MIDC & Metro 12 Corridor",
+    badge: "NAINA · Industrial & Residential Node",
+    color: "#16a34a",
+    stats: [{val:"MIDC",lbl:"Industrial Estate"},{val:"Metro 12",lbl:"Kalyan–Taloja Line"},{val:"Planned",lbl:"Logistics Parks: 5+"},{val:"₹19,920Cr",lbl:"Metro 12 Investment"}],
+    overview: `Taloja is NAINA's industrial-residential powerhouse, anchored by Taloja MIDC — one of Maharashtra's largest industrial estates. With Metro Line 12 (Kalyan–Dombivli–Taloja) under construction, Taloja is transforming from a purely industrial zone into a mixed-use urban corridor. Its central location between Navi Mumbai CBD and Panvel makes it a key residential and logistics hub.`,
+    railway: [
+      {name:"Panvel–Taloja Rail Corridor",from:"Panvel",to:"Taloja / Navi Mumbai",status:"op",note:"Existing rail connectivity through Navi Mumbai suburban network"},
+      {name:"Taloja–Kalyan Rail Corridor",from:"Taloja",to:"Kalyan / Thane",status:"uc",note:"Expansion under Metro 12 alignment"},
+    ],
+    metro: [
+      {name:"Metro Line 12 — Kalyan–Taloja",from:"Kalyan",to:"Dombivli–Taloja",status:"uc",note:"35+ km line connecting Taloja to Kalyan and Dombivli. ₹19,920 Cr."},
+    ],
+    highways: [
+      {name:"Sion–Panvel Highway",from:"Taloja",to:"Mumbai / Panvel",status:"op",note:"Primary highway connectivity to Mumbai and Panvel"},
+      {name:"NH-48 Corridor",from:"Taloja",to:"Pune / Mumbai",status:"op",note:"National highway access for industrial freight"},
+      {name:"Taloja–Khopoli Road",from:"Taloja",to:"Khopoli / Expressway",status:"op",note:"Industrial corridor access to Mumbai–Pune Expressway"},
+    ],
+    airports: [{name:"NMIA — Navi Mumbai Intl. Airport",dist:"~22 km",status:"uc",note:"30 min via expressway post-NMIA road network"}],
+    ports: [{name:"JNPT — Jawaharlal Nehru Port",dist:"~25 km",status:"op",note:"Freight access via NH-348A and port connector roads"}],
+    majorProjects: [
+      {name:"Taloja MIDC Expansion",icon:"🏭",detail:"One of Maharashtra's largest MIDC estates. Expansion planned with new industrial plots, logistics parks, and SEZ zones."},
+      {name:"Metro Line 12 (Kalyan–Taloja)",icon:"🚇",detail:"35+ km metro under construction. ₹19,920 Cr investment. Connects Taloja to Kalyan, Dombivli, Navi Mumbai. 40% complete."},
+      {name:"Taloja Residential Sectors",icon:"🏘️",detail:"CIDCO residential sectors opening for affordable and mid-range housing as metro connectivity improves."},
+    ],
+    futurePlans: [
+      {name:"Logistics Park Cluster",icon:"🏭",detail:"5+ Grade-A logistics parks planned around Taloja MIDC in the Panvel belt — leveraging JNPT and expressway access."},
+      {name:"EduCity — Tech & Engineering Hub",icon:"🎓",detail:"Engineering colleges, polytechnics, and ITIs planned to support the large industrial workforce base."},
+      {name:"Healthcare — Industrial Hospital",icon:"🏥",detail:"Planned multi-speciality hospital and occupational health centre for MIDC industrial workforce."},
+      {name:"Data Center Zone",icon:"💻",detail:"Power-intensive industrial zone makes Taloja a viable hyperscale data center corridor."},
+    ],
+    investor: [
+      {icon:"🏭",label:"Industrial Demand — MIDC",detail:"Taloja MIDC ensures perpetual industrial and workforce housing demand. MIDC plots see 15–20% annual appreciation."},
+      {icon:"💰",label:"Rental Yield Potential",detail:"Industrial worker housing, mid-range residential — 5–7% gross rental yield. Metro Line 12 will boost yields further."},
+      {icon:"🏙️",label:"CIDCO Planned Layout",detail:"Sector-wise planned development by CIDCO. Wide roads, utility infrastructure, systematic residential rollout."},
+      {icon:"📈",label:"Metro Premium — Line 12",detail:"Properties within 500m of Metro 12 stations expected to see 40–60% premium post-commissioning."},
+      {icon:"🌿",label:"Green Surroundings",detail:"Taloja is surrounded by Khalapur hills and green buffers — clean air and natural landscape despite industrial base."},
+    ]
+  },
+  pen: {
+    name: "Pen", emoji: "🌿",
+    subtitle: "Emerging Southern Gateway — Coastal Corridor & Green Living",
+    badge: "NAINA · Southern Growth Node",
+    color: "#16a34a",
+    stats: [{val:"Planned",lbl:"Virar–Alibaug Corridor"},{val:"NH-66",lbl:"Mumbai–Goa Highway"},{val:"Coastal",lbl:"Tourism & Villas"},{val:"CIDCO",lbl:"Master Planned"}],
+    overview: `Pen is NAINA's southernmost growth node — a rapidly emerging destination for second homes, eco-tourism, and agricultural-to-urban land transition. Its location at the junction of the proposed Mumbai–Goa Expressway and Virar–Alibaug Multimodal Corridor makes Pen a future gateway between Mumbai 3.0 and the Konkan coastal belt.`,
+    railway: [
+      {name:"Pen Railway Station",from:"Pen",to:"Panvel / Mumbai",status:"op",note:"Central Railway branch line connectivity to Panvel and Mumbai"},
+      {name:"Proposed Coastal Rail Extension",from:"Pen",to:"Alibaug / Raigad",status:"pl",note:"Planned rail extension along coastal belt for passenger and freight"},
+    ],
+    metro: [
+      {name:"No Metro Currently",from:"—",to:"—",status:"pl",note:"Long-term metro connectivity planned as part of NAINA expansion"},
+    ],
+    highways: [
+      {name:"Mumbai–Goa Expressway (NH-66)",from:"Pen",to:"Mumbai / Goa",status:"pl",note:"Planned national highway — Pen is a key node on the route"},
+      {name:"Virar–Alibaug Multimodal Corridor",from:"Pen",to:"Virar / Alibaug",status:"uc",note:"126 km corridor — Pen is a midpoint gateway node"},
+      {name:"Panvel–Pen Road",from:"Pen",to:"Panvel",status:"op",note:"State highway connecting Pen to Panvel and expressway network"},
+    ],
+    airports: [{name:"NMIA — Navi Mumbai Intl. Airport",dist:"~35 km",status:"uc",note:"~35 km via Panvel — 45 min drive once airport opens"}],
+    ports: [{name:"Coastal Ferry Points",dist:"10 km",status:"op",note:"Small coastal jetties connecting Pen to Mandwa and Alibaug ferry routes"}],
+    majorProjects: [
+      {name:"Virar–Alibaug Multimodal Corridor",icon:"🛣️",detail:"126 km multimodal expressway passing through Pen. 8 lanes, estimated ₹40,000+ Cr. DPR under preparation."},
+      {name:"Mumbai–Goa Expressway (NH-66)",icon:"🛣️",detail:"Planned national highway through Pen unlocking coastal belt real estate and tourism economy."},
+    ],
+    futurePlans: [
+      {name:"Eco-Tourism & Resort Belt",icon:"🌿",detail:"Konkan hills, rivers and coastal landscape make Pen ideal for eco-resorts, farm stays and wellness retreats."},
+      {name:"Second Home & Villa Market",icon:"🏡",detail:"Growing demand from Mumbai HNWI investors for second homes, farmhouses and coastal villas in Pen belt."},
+      {name:"Agri-Processing & Cold Chain",icon:"🏭",detail:"Alphonso mango belt — planned agri-processing units, cold storage, and export logistics near Pen corridor."},
+      {name:"EduCity — Residential Campus",icon:"🎓",detail:"Planned educational institutions and residential campuses leveraging Pen's clean air and open land."},
+    ],
+    investor: [
+      {icon:"🌿",label:"Green & Clean Living",detail:"Surrounded by hills, rivers and Konkan coast. One of the cleanest air zones in the Mumbai metro region."},
+      {icon:"🏡",label:"Second Home Destination",detail:"Fastest-growing second home market in MMR. Land rates still affordable with 3–5x appreciation potential."},
+      {icon:"💰",label:"Rental Yield — Tourism",detail:"Eco-tourism, farm stays and Airbnb potential — 8–12% yield on resort properties. Growing Mumbai weekend market."},
+      {icon:"📈",label:"Infrastructure Play",detail:"Virar–Alibaug and NH-66 passage will unlock Pen exponentially. Early land at current rates is transformational."},
+      {icon:"🏙️",label:"CIDCO Planning Edge",detail:"CIDCO's NAINA master plan covers Pen — ensuring systematic planned development unlike organic coastal towns."},
+    ]
+  },
+  karjatneral: {
+    name: "Karjat–Neral", emoji: "🏔️",
+    subtitle: "Gateway to Western Ghats — Second Homes & Tourism Hub",
+    badge: "NAINA · Hill Station & Rail Corridor Node",
+    color: "#7c3aed",
+    stats: [{val:"Double",lbl:"Track Rail Under Const."},{val:"Matheran",lbl:"Hill Station Nearby"},{val:"NH-48",lbl:"Mumbai–Pune Corridor"},{val:"CIDCO",lbl:"Planned Expansion"}],
+    overview: `Karjat–Neral is NAINA's easternmost node at the foothills of the Western Ghats. A popular weekend destination from Mumbai, it is now being integrated into the Mumbai 3.0 urban framework with the Panvel–Karjat double track rail expansion and NH-48 corridor upgrades. With Matheran nearby and the Ulhas river landscape, it is the premium second home and eco-tourism destination of Mumbai 3.0.`,
+    railway: [
+      {name:"Panvel–Karjat Double Track",from:"Panvel",to:"Karjat / Neral",status:"uc",note:"30 km · double tracking under construction — massively improves frequency and capacity"},
+      {name:"Karjat Railway Station",from:"Karjat",to:"Mumbai CST / Pune",status:"op",note:"Central Railway hub — well connected to Mumbai and Pune"},
+      {name:"Neral–Matheran Narrow Gauge",from:"Neral",to:"Matheran Hill Station",status:"op",note:"UNESCO heritage toy train — tourist attraction"},
+    ],
+    metro: [
+      {name:"No Metro Currently",from:"—",to:"—",status:"pl",note:"Long-term metro extension studied as part of NAINA Phase 2"},
+    ],
+    highways: [
+      {name:"NH-48 (Mumbai–Pune National Highway)",from:"Karjat",to:"Mumbai / Pune",status:"op",note:"Primary highway — 6 lanes, continental logistics spine"},
+      {name:"Mumbai–Pune Expressway Access",from:"Karjat",to:"Expressway",status:"op",note:"Access via Khopoli interchange — 1.5 hrs to Mumbai"},
+    ],
+    airports: [{name:"NMIA — Navi Mumbai Intl. Airport",dist:"~45 km",status:"uc",note:"~1 hr via expressway once airport and road network complete"}],
+    ports: [{name:"JNPT — Jawaharlal Nehru Port",dist:"~50 km",status:"op",note:"Accessible via NH-48 and port connector roads for industrial freight"}],
+    majorProjects: [
+      {name:"Panvel–Karjat Double Track Rail",icon:"🚆",detail:"30 km double tracking under construction. ₹2,950 Cr. Completion 2026. Will reduce travel time to Mumbai significantly."},
+      {name:"NH-48 Widening",icon:"🛣️",detail:"Ongoing expansion of NH-48 through Karjat belt — boosting connectivity and reducing Mumbai travel time."},
+    ],
+    futurePlans: [
+      {name:"Western Ghats Eco-Tourism Circuit",icon:"🏔️",detail:"Integrated eco-tourism circuit covering Karjat, Neral, Matheran — trekking, camping, heritage rail, river activities."},
+      {name:"Second Home & Resort Belt",icon:"🏡",detail:"Luxury villa and resort development along Ulhas river and Ghats foothills — biggest growth sector for Karjat."},
+      {name:"Adventure Tourism Hub",icon:"🏕️",detail:"Planned adventure sports, river rafting, trekking infrastructure — positioning Karjat as Mumbai's adventure gateway."},
+      {name:"EduCity — Residential Campus",icon:"🎓",detail:"Residential school campuses and university annexes leveraging clean air and large land parcels."},
+    ],
+    investor: [
+      {icon:"🏔️",label:"Western Ghats Premium",detail:"Hill station proximity drives premium second home pricing. Matheran, Bhimashankar, Rajmachi all accessible."},
+      {icon:"🌿",label:"Green & Clean Living",detail:"Western Ghats biosphere — cleanest air, natural rivers, pristine forest. Premium wellness and lifestyle destination."},
+      {icon:"💰",label:"Rental Yield — Tourism",detail:"Weekend rental, Airbnb, eco-resort model — 10–15% yield on well-positioned properties. Mumbai weekend market is huge."},
+      {icon:"📈",label:"Rail Double Track Premium",detail:"Post-Panvel–Karjat double track, daily commute to Mumbai becomes viable. Will unlock permanent residential demand."},
+      {icon:"🏡",label:"Land Appreciation Play",detail:"Still among the most affordable land near Mumbai metro. Infrastructure upgrades will drive 3–5x appreciation over decade."},
+    ]
+  },
+  kalyan: {
+    name: "Kalyan", emoji: "🏘️",
+    subtitle: "MMR's Central Residential Hub — Metro 5 & 12 Intersection",
+    badge: "NAINA · Residential & Industrial Growth Node",
+    color: "#9f7aea",
+    stats: [{val:"Metro 5",lbl:"Thane–Bhiwandi–Kalyan"},{val:"Metro 12",lbl:"Kalyan–Taloja Line"},{val:"₹37,553Cr",lbl:"Combined Metro Invest."},{val:"2027-29",lbl:"Metro Completion"}],
+    overview: `Kalyan is one of MMR's largest and most important residential and commercial nodes. As the intersection point of Metro Line 5 (Thane–Bhiwandi–Kalyan) and Metro Line 12 (Kalyan–Dombivli–Taloja), Kalyan is becoming the central transit hub of the eastern MMR. With massive residential demand, growing IT/ITeS presence, and strong affordability, Kalyan is the residential growth engine of Mumbai 3.0.`,
+    railway: [
+      {name:"Kalyan Junction",from:"Kalyan",to:"Mumbai CST / Pune / Nashik / Konkan",status:"op",note:"Major Central Railway junction — 4 lines radiate from Kalyan"},
+      {name:"Kalyan–Dombivli Local",from:"Kalyan",to:"Thane / Mumbai",status:"op",note:"Suburban rail to Mumbai — high frequency commuter line"},
+    ],
+    metro: [
+      {name:"Metro Line 5 — Thane–Bhiwandi–Kalyan",from:"Thane",to:"Bhiwandi–Kalyan",status:"uc",note:"24.9 km metro · ₹17,633 Cr · Target 2027"},
+      {name:"Metro Line 12 — Kalyan–Taloja",from:"Kalyan",to:"Dombivli–Taloja–Navi Mumbai",status:"uc",note:"35+ km metro · ₹19,920 Cr · Target 2029"},
+    ],
+    highways: [
+      {name:"NH-48 (Mumbai–Pune National Highway)",from:"Kalyan",to:"Mumbai / Pune",status:"op",note:"National highway access for commercial and industrial freight"},
+      {name:"Kalyan–Shilphata Road",from:"Kalyan",to:"Thane / Navi Mumbai",status:"op",note:"Primary urban connector to Thane and Navi Mumbai"},
+      {name:"Kalyan–Dombivli Ring Road",from:"Kalyan",to:"Dombivli / Ambarnath",status:"uc",note:"Urban ring road under improvement for decongestion"},
+    ],
+    airports: [{name:"Chhatrapati Shivaji International (CSIA)",dist:"~35 km",status:"op",note:"Mumbai airport — 45–60 min via expressway"},{name:"NMIA — Navi Mumbai Intl. Airport",dist:"~30 km",status:"uc",note:"30 min via Metro 12 + road once complete"}],
+    ports: [{name:"JNPT — Jawaharlal Nehru Port",dist:"~35 km",status:"op",note:"Via NH-48 and port connectors — freight logistics access"}],
+    majorProjects: [
+      {name:"Metro Line 5 (Thane–Bhiwandi–Kalyan)",icon:"🚇",detail:"24.9 km metro. ₹17,633 Cr. 55% complete. Kalyan becomes endpoint of Thane–Bhiwandi metro axis."},
+      {name:"Metro Line 12 (Kalyan–Dombivli–Taloja)",icon:"🚇",detail:"35+ km metro. ₹19,920 Cr. 40% complete. Connects Kalyan to Navi Mumbai via Dombivli and Taloja."},
+      {name:"Kalyan–Dombivli Smart City",icon:"🏙️",detail:"Smart city mission implementation — integrated command centre, smart roads, digital infrastructure."},
+    ],
+    futurePlans: [
+      {name:"DTA Zone — IT/ITeS Hub",icon:"💻",detail:"Domestic Tariff Area (DTA) zone emerging as IT/ITeS and mixed-use commercial destination near Kalyan."},
+      {name:"Kalyan Transit Oriented Development",icon:"🚇",detail:"TOD zones around both metro lines — high-density mixed-use development at metro stations."},
+      {name:"Logistics & Warehousing Expansion",icon:"🏭",detail:"Bhiwandi–Kalyan belt emerging as India's largest warehousing cluster. 20M+ sq ft demand pipeline."},
+      {name:"EduCity — University Campus",icon:"🎓",detail:"Multiple university campuses and colleges already established. Planned expansion into NAINA zones."},
+      {name:"Healthcare Hub",icon:"🏥",detail:"Multi-speciality hospitals and medical colleges in pipeline for the 3M+ population catchment."},
+    ],
+    investor: [
+      {icon:"🚇",label:"Dual Metro Premium",detail:"The only NAINA node with TWO metro lines. Station-adjacent properties projected to see 50–80% premium post-commissioning."},
+      {icon:"💰",label:"Rental Yield Potential",detail:"Strong rental demand from IT, industrial, logistics workforce. 5–7% gross yield. Metro will significantly boost rental rates."},
+      {icon:"🏙️",label:"Large Residential Market",detail:"3M+ population — large captive market for retail, services, healthcare. Investment in commercial is low-risk."},
+      {icon:"📈",label:"Affordability + Appreciation",detail:"Most affordable metro-connected node in MMR. Metro commissioning will drive rapid appreciation — 60–100% over 5 years."},
+      {icon:"🌿",label:"Green Surroundings",detail:"Ulhas river, Matheran hills visible — natural surroundings despite urban density. Improving liveability index."},
+      {icon:"🏥",label:"Education & Healthcare",detail:"Strong existing institutional base (engineering colleges, hospitals). Upcoming NAINA expansion adds further."},
+    ]
+  }
+};
+
+let currentDistrict = null;
+
+function openDistrictPanel(key) {
+  currentDistrict = key;
+  const d = districtData[key];
+  document.getElementById('dpTitle').textContent = d.emoji + ' ' + d.name;
+  document.getElementById('dpSubtitle').textContent = d.subtitle;
+  document.getElementById('dpBadge').textContent = d.badge;
+  document.getElementById('dpDownloadBtn').onclick = downloadDistrictReport;
+  renderDpSection('overview');
+  document.querySelectorAll('.dp-tab').forEach((t,i)=>{t.classList.toggle('active',i===0);});
+  document.getElementById('districtOverlay').classList.add('active');
+}
+
+function closeDistrictPanel(e) {
+  if (e.target === document.getElementById('districtOverlay')) closeDistrictPanelBtn();
+}
+function closeDistrictPanelBtn() {
+  document.getElementById('districtOverlay').classList.remove('active');
+}
+
+function switchDpTab(section, btn) {
+  document.querySelectorAll('.dp-tab').forEach(t=>t.classList.remove('active'));
+  btn.classList.add('active');
+  renderDpSection(section);
+}
+
+function statusTag(s) {
+  if(s==='op') return '<span class="dp-tag op">Operational</span>';
+  if(s==='uc') return '<span class="dp-tag uc">Under Const.</span>';
+  return '<span class="dp-tag pl">Planned</span>';
+}
+
+function renderDpSection(section) {
+  const d = districtData[currentDistrict];
+  let html = '';
+  if (section === 'overview') {
+    html += `<div class="dp-highlight"><div class="dp-highlight-text">${d.overview}</div></div>`;
+    html += `<div class="dp-stat-row">${d.stats.map(s=>`<div class="dp-stat"><div class="dp-stat-val">${s.val}</div><div class="dp-stat-lbl">${s.lbl}</div></div>`).join('')}</div>`;
+    html += `<div class="dp-section-title">🛣️ Quick Connectivity Summary</div>`;
+    html += `<div class="dp-grid-3">`;
+    html += `<div class="dp-card"><div class="dp-card-title">🚆 Railway</div>${d.railway.map(r=>`<div class="dp-item"><strong>${r.name}</strong> — ${r.from} → ${r.to}</div>`).join('')}</div>`;
+    html += `<div class="dp-card"><div class="dp-card-title">🚇 Metro</div>${d.metro.map(r=>`<div class="dp-item"><strong>${r.name}</strong> — ${r.from} → ${r.to}</div>`).join('')}</div>`;
+    html += `<div class="dp-card"><div class="dp-card-title">🛣️ Highways</div>${d.highways.map(r=>`<div class="dp-item"><strong>${r.name}</strong></div>`).join('')}</div>`;
+    html += `</div>`;
+  } else if (section === 'connectivity') {
+    html += `<div class="dp-section-title">🚆 Railway Connectivity</div>`;
+    d.railway.forEach(r=>{
+      html+=`<div class="dp-card" style="margin-bottom:8px;"><div class="dp-card-title">${r.name} ${statusTag(r.status)}</div><div class="dp-item"><strong>From:</strong> ${r.from}</div><div class="dp-item"><strong>To:</strong> ${r.to}</div><div class="dp-item">${r.note}</div></div>`;
+    });
+    html += `<div class="dp-section-title">🚇 Metro Connectivity</div>`;
+    d.metro.forEach(r=>{
+      html+=`<div class="dp-card" style="margin-bottom:8px;"><div class="dp-card-title">${r.name} ${statusTag(r.status)}</div><div class="dp-item"><strong>From:</strong> ${r.from}</div><div class="dp-item"><strong>To:</strong> ${r.to}</div><div class="dp-item">${r.note}</div></div>`;
+    });
+    html += `<div class="dp-section-title">🛣️ Highways & Roads</div>`;
+    d.highways.forEach(r=>{
+      html+=`<div class="dp-card" style="margin-bottom:8px;"><div class="dp-card-title">${r.name} ${statusTag(r.status)}</div><div class="dp-item"><strong>From:</strong> ${r.from} | <strong>To:</strong> ${r.to}</div><div class="dp-item">${r.note}</div></div>`;
+    });
+    html += `<div class="dp-grid-2" style="margin-top:12px;">`;
+    html += `<div><div class="dp-section-title">✈️ Airports</div>${d.airports.map(a=>`<div class="dp-card" style="margin-bottom:6px;"><div class="dp-card-title">${a.name} ${statusTag(a.status)}</div><div class="dp-item"><strong>Distance:</strong> ${a.dist}</div><div class="dp-item">${a.note}</div></div>`).join('')}</div>`;
+    html += `<div><div class="dp-section-title">⚓ Ports</div>${d.ports.map(p=>`<div class="dp-card" style="margin-bottom:6px;"><div class="dp-card-title">${p.name} ${statusTag(p.status)}</div><div class="dp-item"><strong>Distance:</strong> ${p.dist}</div><div class="dp-item">${p.note}</div></div>`).join('')}</div>`;
+    html += `</div>`;
+  } else if (section === 'projects') {
+    html += `<div class="dp-section-title">🏗️ Major Infrastructure Projects</div>`;
+    d.majorProjects.forEach(p=>{
+      html+=`<div class="dp-card" style="margin-bottom:10px;"><div class="dp-card-title">${p.icon} ${p.name}</div><div class="dp-item">${p.detail}</div></div>`;
+    });
+  } else if (section === 'future') {
+    html += `<div class="dp-section-title">🔮 Future Plans & Emerging Zones</div>`;
+    d.futurePlans.forEach(p=>{
+      html+=`<div class="dp-future-item"><div class="dp-future-icon">${p.icon}</div><div><div class="dp-future-label">${p.name}</div><div class="dp-future-detail">${p.detail}</div></div></div>`;
+    });
+  } else if (section === 'investor') {
+    html += `<div class="dp-section-title">💼 Investor Advantage — Why This District?</div>`;
+    d.investor.forEach(p=>{
+      html+=`<div class="dp-invest-item"><div class="dp-invest-icon">${p.icon}</div><div><div class="dp-invest-label">${p.label}</div><div class="dp-invest-detail">${p.detail}</div></div></div>`;
+    });
+  }
+  document.getElementById('dpBody').innerHTML = html;
+}
+
+function downloadDistrictReport() {
+  const d = districtData[currentDistrict];
+  let txt = `MUMBAI 3.0 — NAINA DISTRICT INTELLIGENCE REPORT\n`;
+  txt += `=================================================\n`;
+  txt += `District: ${d.name}\n`;
+  txt += `Classification: ${d.badge}\n`;
+  txt += `${d.subtitle}\n\n`;
+  txt += `OVERVIEW\n--------\n${d.overview}\n\n`;
+  txt += `KEY STATISTICS\n--------------\n`;
+  d.stats.forEach(s=>{ txt+=`• ${s.lbl}: ${s.val}\n`; });
+  txt += `\nRAILWAY CONNECTIVITY\n--------------------\n`;
+  d.railway.forEach(r=>{ txt+=`• ${r.name} | ${r.from} → ${r.to}\n  Status: ${r.status==='op'?'Operational':r.status==='uc'?'Under Construction':'Planned'}\n  Note: ${r.note}\n`; });
+  txt += `\nMETRO CONNECTIVITY\n------------------\n`;
+  d.metro.forEach(r=>{ txt+=`• ${r.name} | ${r.from} → ${r.to}\n  Status: ${r.status==='op'?'Operational':r.status==='uc'?'Under Construction':'Planned'}\n  Note: ${r.note}\n`; });
+  txt += `\nHIGHWAYS & ROADS\n-----------------\n`;
+  d.highways.forEach(r=>{ txt+=`• ${r.name} | ${r.from} → ${r.to}\n  Status: ${r.status==='op'?'Operational':r.status==='uc'?'Under Construction':'Planned'}\n  Note: ${r.note}\n`; });
+  txt += `\nAIRPORTS\n---------\n`;
+  d.airports.forEach(a=>{ txt+=`• ${a.name} | Distance: ${a.dist}\n  ${a.note}\n`; });
+  txt += `\nPORTS\n------\n`;
+  d.ports.forEach(p=>{ txt+=`• ${p.name} | Distance: ${p.dist}\n  ${p.note}\n`; });
+  txt += `\nMAJOR INFRASTRUCTURE PROJECTS\n-----------------------------\n`;
+  d.majorProjects.forEach(p=>{ txt+=`${p.icon} ${p.name}\n  ${p.detail}\n\n`; });
+  txt += `FUTURE PLANS & EMERGING ZONES\n-----------------------------\n`;
+  d.futurePlans.forEach(p=>{ txt+=`${p.icon} ${p.name}\n  ${p.detail}\n\n`; });
+  txt += `INVESTOR ADVANTAGES\n-------------------\n`;
+  d.investor.forEach(p=>{ txt+=`${p.icon} ${p.label}\n  ${p.detail}\n\n`; });
+  txt += `\n---\nData compiled: May 2025 | Source: CIDCO / NAINA Master Plan / MMR Infrastructure Reports\nMumbai 3.0 Strategic Intelligence Platform\n`;
+  const blob = new Blob([txt], {type:'text/plain'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `Mumbai3.0_${d.name}_District_Report.txt`;
+  a.click();
+}
+
+// ===== TAB SWITCHING =====
+function switchTab(tabId) {
+    document.querySelectorAll('.tab-panel').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+    document.getElementById('panel-' + tabId).classList.add('active');
+    document.getElementById('tab-' + tabId).classList.add('active');
+    if (tabId === 'master' && !map) { initMap(); }
+    if (tabId === 'map2' && !map2) { initMap2(); }
+    if (tabId === 'matrix' && !map3) { initMap3(); }
+}
+
+function filterMatrix(filter, btn) {
+    document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelectorAll('#matrixBody tbody tr').forEach(row => {
+        const status = row.getAttribute('data-status');
+        const modal = row.getAttribute('data-modal');
+        let show = false;
+        if (filter === 'all') show = true;
+        else if (filter === 'operational' && status === 'operational') show = true;
+        else if (filter === 'construction' && status === 'construction') show = true;
+        else if (filter === 'planned' && status === 'planned') show = true;
+        else if (filter === 'highway' && modal === 'highway') show = true;
+        else if (filter === 'rail' && modal === 'rail') show = true;
+        else if (filter === 'metro' && modal === 'metro') show = true;
+        row.style.display = show ? '' : 'none';
+    });
+    document.querySelectorAll('#matrixBody .report-section-title').forEach(title => {
+        const cat = title.getAttribute('data-category');
+        if (!cat) { title.style.display = filter === 'all' ? '' : 'none'; return; }
+        const catMap = { highway:'highway', metro:'metro', railway:'rail', aviation:'aviation', maritime:'maritime' };
+        const match = catMap[cat];
+        title.style.display = (filter === 'all' || filter === match) ? '' : 'none';
+    });
+}
+
+// ===== MAP SHARED PATHS =====
+let map;
+const m3Boundary = [[18.995,73.020],[19.020,73.115],[18.940,73.155],[18.820,73.195],[18.705,73.105],[18.725,72.990],[18.815,72.942],[18.870,72.925],[18.925,72.935],[18.932,72.968],[18.995,73.020]];
+const pathAtalSetu = [[18.955,72.855],[18.945,72.900],[18.900,72.965],[18.910,73.010]];
+const pathNH348 = [[18.950,72.950],[18.935,73.010],[18.900,72.965]];
+const pathNH48 = [[19.025,73.100],[18.990,73.118],[18.945,73.140],[18.890,73.165]];
+const pathPuneExp = [[18.990,73.120],[18.930,73.150],[18.860,73.170],[18.780,73.190]];
+const pathVA = [[18.980,73.090],[18.925,73.065],[18.868,73.025],[18.810,73.012],[18.720,73.025]];
+const pathMumbaiGoa = [[18.990,73.115],[18.930,73.095],[18.870,73.060],[18.810,73.020],[18.740,73.070],[18.660,73.090],[18.580,73.120],[18.450,73.180],[18.300,73.250],[18.150,73.350]];
+const pathMetro1 = [[19.015,73.038],[18.995,73.025],[18.975,73.030]];
+const pathMetro8 = [[18.975,72.868],[18.968,72.920],[18.955,72.975],[18.953,73.015],[18.953,73.065]];
+const pathMthlSpur = [[18.900,72.965],[18.882,73.021],[18.868,73.055],[18.890,73.090]];
+const pathUran = [[18.948,73.007],[18.895,72.946],[18.878,72.943]];
+const pathKarjat = [[18.989,73.114],[18.960,73.142],[18.941,73.190]];
+const pathDfc = [[18.989,73.114],[18.915,73.090],[18.868,73.023],[18.825,73.008],[18.735,73.015]];
+const pathKonkanRail = [[19.010,73.112],[18.980,73.108],[18.950,73.105],[18.920,73.100],[18.880,73.095],[18.840,73.092],[18.800,73.088],[18.760,73.085],[18.720,73.080],[18.680,73.078],[18.640,73.075],[18.580,73.072],[18.520,73.068]];
+
+// DISTRICT PINS for Map 1
+const districtPins = [
+  {key:'panvel', name:'Panvel', ll:[18.990,73.115], emoji:'🏙️'},
+  {key:'ulwe', name:'Ulwe', ll:[18.953,73.065], emoji:'✈️'},
+  {key:'uran', name:'Uran', ll:[18.878,72.943], emoji:'⚓'},
+  {key:'taloja', name:'Taloja', ll:[18.922,73.070], emoji:'🏭'},
+  {key:'pen', name:'Pen', ll:[18.740,73.095], emoji:'🌿'},
+  {key:'karjatneral', name:'Karjat-Neral', ll:[18.908,73.172], emoji:'🏔️'},
+  {key:'kalyan', name:'Kalyan', ll:[19.240,73.130], emoji:'🏘️'},
+];
+
+function initMap() {
+    map = L.map('map', { zoomControl: true }).setView([18.895, 73.035], 11);
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', { maxZoom: 19, attribution: '© OpenStreetMap contributors' }).addTo(map);
+    L.polygon(m3Boundary, { color:'#475569', fillColor:'#475569', fillOpacity:0.015, weight:4, dashArray:'6,6' }).addTo(map).bindPopup("<b>Mumbai 3.0 / NAINA Boundary</b><br>324.40 Sq. Km.");
+
+    const aL=L.layerGroup(), pL=L.layerGroup(), hL=L.layerGroup(), mL=L.layerGroup(), rL=L.layerGroup();
+
+    // Aviation
+    L.circleMarker([18.953,73.065],{radius:10,color:'#0f172a',fillColor:'#38bdf8',fillOpacity:1,weight:3.5}).bindPopup("<b>✈️ NMIA</b><br><span style='color:#ea580c;font-weight:bold;'>UNDER CONSTRUCTION</span>").addTo(aL);
+    // Port
+    L.circleMarker([18.950,72.950],{radius:10,color:'#0284c7',fillColor:'#0ea5e9',fillOpacity:1,weight:3.5}).bindPopup("<b>⚓ JNPT</b><br><span style='color:#16a34a;font-weight:bold;'>OPERATIONAL</span>").addTo(pL);
+    // Highways
+    L.polyline(pathAtalSetu,{color:'#dc2626',weight:5,opacity:0.95}).bindPopup("<b>Atal Setu (MTHL)</b><br>OPERATIONAL").addTo(hL);
+    L.polyline(pathNH348,{color:'#b91c1c',weight:5,opacity:0.95}).bindPopup("<b>NH-348 / 348A</b><br>OPERATIONAL").addTo(hL);
+    L.polyline(pathNH48,{color:'#b91c1c',weight:4.5,opacity:0.95}).bindPopup("<b>NH-48</b><br>OPERATIONAL").addTo(hL);
+    L.polyline(pathPuneExp,{color:'#7f1d1d',weight:5.5,opacity:0.95}).bindPopup("<b>Mumbai–Pune Expressway</b><br>OPERATIONAL").addTo(hL);
+    L.polyline(pathVA,{color:'#ea580c',weight:4,dashArray:'8,6',opacity:0.95}).bindPopup("<b>Virar–Alibaug Corridor</b><br>UNDER CONSTRUCTION").addTo(hL);
+    L.polyline(pathMumbaiGoa,{color:'#2563eb',weight:4,dashArray:'3,6',opacity:0.90}).bindPopup("<b>Mumbai–Goa Expressway (NH-66)</b><br>PLANNED").addTo(hL);
+    // Metro
+    L.polyline(pathMetro1,{color:'#db2777',weight:4.5,opacity:0.95}).bindPopup("<b>Metro Line 1</b><br>OPERATIONAL").addTo(mL);
+    L.polyline(pathMetro8,{color:'#f59e0b',weight:4.5,dashArray:'6,5',opacity:0.95}).bindPopup("<b>Metro Line 8 — BKC to NMIA</b><br>UNDER CONSTRUCTION").addTo(mL);
+    L.polyline(pathMthlSpur,{color:'#2563eb',weight:4,dashArray:'2,6',opacity:0.90}).bindPopup("<b>MTHL Metro Spur</b><br>PLANNED").addTo(mL);
+    // Rail
+    L.polyline(pathUran,{color:'#16a34a',weight:5,opacity:0.95}).bindPopup("<b>Uran–Belapur Rail</b><br>OPERATIONAL").addTo(rL);
+    L.polyline(pathKarjat,{color:'#ea580c',weight:4,dashArray:'8,6',opacity:0.90}).bindPopup("<b>Panvel–Karjat Double Track</b><br>UNDER CONSTRUCTION").addTo(rL);
+    L.polyline(pathDfc,{color:'#7c3aed',weight:4,dashArray:'10,6',opacity:0.85}).bindPopup("<b>Panvel–Uran DFC</b><br>PLANNED").addTo(rL);
+    L.polyline(pathKonkanRail,{color:'#92400e',weight:4.5,opacity:0.95}).bindPopup("<b>Konkan Railway</b><br>OPERATIONAL").addTo(rL);
+
+    [aL,pL,hL,mL,rL].forEach(l=>l.addTo(map));
+    L.control.layers({}, {"✈️ Show Aviation Hubs":aL,"⚓ Show Marine Ports":pL,"🛣️ Show Highway Tracks":hL,"🚇 Show Metro Lines":mL,"🚆 Show Railway Lines":rL}, {collapsed:false}).addTo(map);
+
+    // DISTRICT PINS
+    districtPins.forEach(dp=>{
+      const icon = L.divIcon({
+        className:'',
+        html:`<div class="district-marker-icon" onclick="openDistrictPanel('${dp.key}')">${dp.emoji} ${dp.name}</div>`,
+        iconAnchor:[40,12]
+      });
+      L.marker(dp.ll, {icon, zIndexOffset:1000}).addTo(map);
+    });
+}
+
+function focusNetwork(ll,z) { if(map) map.setView(ll,z,{animate:true,duration:1}); }
+
+// ===== MAP 2 =====
+let map2;
+function initMap2() {
+    map2 = L.map('map2',{zoomControl:true}).setView([19.050,73.100],10);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'}).addTo(map2);
+    L.polygon(m3Boundary,{color:'#1a1a2e',fillColor:'#e0f2fe',fillOpacity:0.10,weight:2.5,dashArray:'6,5'}).addTo(map2);
+    // Economic Zones
+    L.polygon([[18.995,73.020],[19.020,73.070],[18.975,73.080],[18.955,73.040],[18.995,73.020]],{color:'#2563eb',fillColor:'#dbeafe',fillOpacity:0.35,weight:1.5,dashArray:'4,3'}).addTo(map2).bindPopup("<b>Navi Mumbai CBD</b>");
+    L.polygon([[18.970,73.045],[18.980,73.090],[18.940,73.095],[18.935,73.050],[18.970,73.045]],{color:'#06b6d4',fillColor:'#cffafe',fillOpacity:0.35,weight:1.5,dashArray:'4,3'}).addTo(map2).bindPopup("<b>NMIA Aero-Logistics Zone</b>");
+    L.polygon([[18.965,72.930],[18.965,72.970],[18.925,72.970],[18.925,72.930],[18.965,72.930]],{color:'#ea580c',fillColor:'#ffedd5',fillOpacity:0.35,weight:1.5,dashArray:'4,3'}).addTo(map2).bindPopup("<b>JNPT Logistics Hub</b>");
+    L.polygon([[19.280,73.040],[19.280,73.200],[19.180,73.200],[19.180,73.040],[19.280,73.040]],{color:'#16a34a',fillColor:'#dcfce7',fillOpacity:0.30,weight:1.5,dashArray:'4,3'}).addTo(map2).bindPopup("<b>Bhiwandi–Kalyan Industrial Belt</b>");
+    L.polygon([[19.350,72.820],[19.400,72.900],[19.300,72.950],[19.250,72.860],[19.350,72.820]],{color:'#8b5cf6',fillColor:'#ede9fe',fillOpacity:0.25,weight:1.5,dashArray:'4,3'}).addTo(map2).bindPopup("<b>Virar Growth Belt</b>");
+    // Roads
+    L.polyline([[18.955,72.855],[18.945,72.900],[18.900,72.965],[18.910,73.010]],{color:'#e53e3e',weight:5,opacity:1}).addTo(map2).bindPopup("<b>① MTHL – Atal Setu</b>");
+    addLabel(map2,[18.930,72.925],"① MTHL","#e53e3e");
+    L.polyline([[18.950,72.950],[18.935,73.010],[18.900,72.965]],{color:'#c53030',weight:4,opacity:0.9}).addTo(map2).bindPopup("<b>⑨ NH-348 JNPT</b>");
+    L.polyline([[19.025,73.100],[18.990,73.118],[18.945,73.140],[18.890,73.165]],{color:'#c53030',weight:4,opacity:0.9}).addTo(map2).bindPopup("<b>NH-48</b>");
+    L.polyline([[18.990,73.120],[18.930,73.150],[18.860,73.170],[18.780,73.190]],{color:'#7f1d1d',weight:5.5,opacity:1}).addTo(map2).bindPopup("<b>⑦ Mumbai–Pune Expressway</b>");
+    addLabel(map2,[18.900,73.165],"⑦ Pune Exp.","#7f1d1d");
+    L.polyline([[19.380,72.840],[19.200,72.870],[19.050,72.930],[18.980,73.050],[18.925,73.065],[18.868,73.025],[18.810,73.012],[18.720,73.025]],{color:'#ed8936',weight:4.5,dashArray:'10,6',opacity:1}).addTo(map2).bindPopup("<b>⑥ Virar–Alibaug Corridor</b>");
+    addLabel(map2,[19.100,72.900],"⑥ Virar–Alibaug","#ed8936");
+    L.polyline([[18.920,72.820],[18.960,72.828],[19.020,72.820],[19.070,72.823],[19.120,72.845]],{color:'#3182ce',weight:4.5,opacity:1}).addTo(map2).bindPopup("<b>② Mumbai Coastal Road</b>");
+    addLabel(map2,[19.000,72.818],"② Coastal Rd","#3182ce");
+    L.polyline([[18.960,72.832],[19.020,72.836],[19.100,72.840],[19.200,72.850],[19.370,72.850]],{color:'#38a169',weight:4,opacity:0.9}).addTo(map2).bindPopup("<b>③ Western Express Highway</b>");
+    addLabel(map2,[19.150,72.845],"③ WEH","#38a169");
+    L.polyline([[18.975,72.865],[19.020,72.950],[19.070,72.990],[19.170,72.985],[19.220,72.975]],{color:'#d69e2e',weight:4,dashArray:'8,4',opacity:1}).addTo(map2).bindPopup("<b>④ Metro Line 4</b>");
+    addLabel(map2,[19.090,72.985],"④ Metro L4","#d69e2e");
+    L.polyline([[19.220,72.975],[19.230,73.030],[19.240,73.130]],{color:'#9f7aea',weight:4,dashArray:'8,4',opacity:1}).addTo(map2).bindPopup("<b>⑤ Metro Line 5</b>");
+    addLabel(map2,[19.230,73.060],"⑤ Metro L5","#9f7aea");
+    L.polyline(pathMetro1,{color:'#db2777',weight:4.5,dashArray:'8,4',opacity:1}).addTo(map2).bindPopup("<b>Metro Line 1</b>");
+    L.polyline(pathMetro8,{color:'#f59e0b',weight:4.5,dashArray:'6,4',opacity:1}).addTo(map2).bindPopup("<b>Metro Line 8 — BKC to NMIA</b>");
+    addLabel(map2,[18.960,72.990],"Metro L8","#f59e0b");
+    L.polyline([[18.940,72.835],[18.980,72.870],[19.050,72.960],[19.120,73.000],[19.180,73.010],[19.240,73.130]],{color:'#744210',weight:4,dashArray:'12,4',opacity:0.9}).addTo(map2).bindPopup("<b>⑩ Central Railway</b>");
+    addLabel(map2,[19.080,72.980],"⑩ Central Rly","#744210");
+    L.polyline([[18.948,73.007],[18.895,72.946],[18.878,72.943]],{color:'#16a34a',weight:4.5,opacity:1}).addTo(map2).bindPopup("<b>Uran–Belapur Rail</b>");
+    L.polyline([[18.989,73.114],[18.960,73.142],[18.941,73.190]],{color:'#ea580c',weight:3.5,dashArray:'8,5',opacity:0.9}).addTo(map2).bindPopup("<b>Panvel–Karjat Double Track</b>");
+    L.polyline(pathDfc,{color:'#7c3aed',weight:3.5,dashArray:'10,5',opacity:0.85}).addTo(map2).bindPopup("<b>Panvel–Uran DFC</b>");
+    L.polyline(pathKonkanRail,{color:'#92400e',weight:4.5,opacity:0.95}).addTo(map2).bindPopup("<b>Konkan Railway · OPERATIONAL</b>");
+addLabel(map2,[18.750,73.070],"Konkan Rly","#92400e");
+L.polyline(pathMumbaiGoa,{color:'#2563eb',weight:4,dashArray:'3,6',opacity:0.90}).addTo(map2).bindPopup("<b>Mumbai–Goa Expressway NH-66 · PLANNED</b>");
+addLabel(map2,[18.660,73.080],"NH-66 Goa Exp.","#2563eb");
+    // Nodes
+    addNode(map2,[18.953,73.065],'#0284c7',"<b>✈️ NMIA</b><br>Under Construction",14);
+    addNode(map2,[18.950,72.950],'#0ea5e9',"<b>⚓ JNPT Port</b><br>Operational",13);
+    addNode(map2,[18.990,73.115],'#22d3ee',"<b>Panvel Hub</b>",12);
+    addNode(map2,[19.000,73.020],'#2563eb',"<b>Navi Mumbai CBD</b>",11);
+    addNode(map2,[18.940,72.835],'#1a1a2e',"<b>Core Mumbai</b>",12);
+    addNode(map2,[19.220,72.975],'#d69e2e',"<b>Thane</b>",10);
+    addNode(map2,[19.280,73.060],'#16a34a',"<b>Bhiwandi</b>",10);
+    addNode(map2,[19.240,73.130],'#9f7aea',"<b>Kalyan</b>",9);
+    addNode(map2,[19.380,72.840],'#ed8936',"<b>Virar</b>",9);
+    addNode(map2,[18.641,72.875],'#16a34a',"<b>Alibaug</b>",9);
+    ['CORE\nMUMBAI','THANE','BHIWANDI','KALYAN','VIRAR','VASAI','ALIBAUG','NAVI\nMUMBAI','PANVEL','RAIGAD'].forEach((name,i) => {
+        const positions = [[18.940,72.800],[19.220,72.940],[19.295,73.070],[19.250,73.155],[19.380,72.800],[19.370,72.835],[18.641,72.840],[19.060,73.015],[18.995,73.115],[18.640,72.780]];
+        addCityLabel(map2, positions[i], name);
+    });
+}
+
+// ===== MAP 3 =====
+let map3;
+function initMap3() {
+    map3 = L.map('map3',{zoomControl:true}).setView([19.050,73.050],10);
+    L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png',{maxZoom:19,attribution:'© OpenStreetMap © CARTO'}).addTo(map3);
+    L.polygon(m3Boundary,{color:'#1a1a2e',fillColor:'#e0f2fe',fillOpacity:0.10,weight:2.5,dashArray:'6,5'}).addTo(map3);
+    L.polygon([[18.995,73.020],[19.020,73.070],[18.975,73.080],[18.955,73.040],[18.995,73.020]],{color:'#2563eb',fillColor:'#dbeafe',fillOpacity:0.35,weight:1.5,dashArray:'4,3'}).addTo(map3).bindPopup("<b>Navi Mumbai CBD</b>");
+    L.polygon([[18.970,73.045],[18.980,73.090],[18.940,73.095],[18.935,73.050],[18.970,73.045]],{color:'#06b6d4',fillColor:'#cffafe',fillOpacity:0.35,weight:1.5,dashArray:'4,3'}).addTo(map3).bindPopup("<b>NMIA Aero-Logistics Zone</b>");
+    L.polygon([[18.965,72.930],[18.965,72.970],[18.925,72.970],[18.925,72.930],[18.965,72.930]],{color:'#ea580c',fillColor:'#ffedd5',fillOpacity:0.35,weight:1.5,dashArray:'4,3'}).addTo(map3).bindPopup("<b>JNPT Logistics Hub</b>");
+    L.polygon([[19.280,73.040],[19.280,73.200],[19.180,73.200],[19.180,73.040],[19.280,73.040]],{color:'#16a34a',fillColor:'#dcfce7',fillOpacity:0.30,weight:1.5,dashArray:'4,3'}).addTo(map3).bindPopup("<b>Bhiwandi–Kalyan Industrial Belt</b>");
+    L.polygon([[19.350,72.820],[19.400,72.900],[19.300,72.950],[19.250,72.860],[19.350,72.820]],{color:'#8b5cf6',fillColor:'#ede9fe',fillOpacity:0.25,weight:1.5,dashArray:'4,3'}).addTo(map3).bindPopup("<b>Virar Growth Belt</b>");
+    L.polyline([[18.955,72.855],[18.945,72.900],[18.900,72.965],[18.910,73.010]],{color:'#e53e3e',weight:5,opacity:1}).addTo(map3).bindPopup("<b>① MTHL – Atal Setu · OPERATIONAL · 21.8 km</b>");
+    addLabel(map3,[18.930,72.925],"① MTHL","#e53e3e");
+    L.polyline([[18.950,72.950],[18.935,73.010],[18.900,72.965]],{color:'#c53030',weight:4,opacity:0.9}).addTo(map3).bindPopup("<b>NH-348 JNPT Corridor · OPERATIONAL</b>");
+    L.polyline([[19.025,73.100],[18.990,73.118],[18.945,73.140],[18.890,73.165]],{color:'#c53030',weight:4,opacity:0.9}).addTo(map3).bindPopup("<b>NH-48 · OPERATIONAL</b>");
+    L.polyline([[18.990,73.120],[18.930,73.150],[18.860,73.170],[18.780,73.190]],{color:'#7f1d1d',weight:5.5,opacity:1}).addTo(map3).bindPopup("<b>Mumbai–Pune Expressway · OPERATIONAL · 94.5 km</b>");
+    addLabel(map3,[18.900,73.165],"Pune Exp.","#7f1d1d");
+    L.polyline([[19.380,72.840],[19.200,72.870],[19.050,72.930],[18.980,73.050],[18.925,73.065],[18.868,73.025],[18.810,73.012],[18.720,73.025]],{color:'#ed8936',weight:4.5,dashArray:'10,6',opacity:1}).addTo(map3).bindPopup("<b>Virar–Alibaug Corridor · UNDER CONSTRUCTION · 126 km</b>");
+    addLabel(map3,[19.100,72.900],"Virar–Alibaug","#ed8936");
+    L.polyline([[18.920,72.820],[18.960,72.828],[19.020,72.820],[19.070,72.823],[19.120,72.845]],{color:'#3182ce',weight:4.5,opacity:1}).addTo(map3).bindPopup("<b>Mumbai Coastal Road · OPERATIONAL</b>");
+    addLabel(map3,[19.000,72.818],"Coastal Rd","#3182ce");
+    L.polyline([[18.960,72.832],[19.020,72.836],[19.100,72.840],[19.200,72.850],[19.370,72.850]],{color:'#38a169',weight:4,opacity:0.9}).addTo(map3).bindPopup("<b>Western Express Highway · OPERATIONAL</b>");
+    addLabel(map3,[19.150,72.845],"WEH","#38a169");
+    L.polyline([[18.975,72.865],[19.020,72.950],[19.070,72.990],[19.170,72.985],[19.220,72.975]],{color:'#d69e2e',weight:4,dashArray:'8,4',opacity:1}).addTo(map3).bindPopup("<b>Metro Line 4 · Wadala–Kasarvadavali · UNDER CONST.</b>");
+    addLabel(map3,[19.090,72.985],"Metro L4","#d69e2e");
+    L.polyline([[19.220,72.975],[19.230,73.030],[19.240,73.130]],{color:'#9f7aea',weight:4,dashArray:'8,4',opacity:1}).addTo(map3).bindPopup("<b>Metro Line 5 · Thane–Bhiwandi–Kalyan · UNDER CONST.</b>");
+    addLabel(map3,[19.230,73.060],"Metro L5","#9f7aea");
+    L.polyline(pathMetro1,{color:'#db2777',weight:4.5,dashArray:'8,4',opacity:1}).addTo(map3).bindPopup("<b>Metro Line 1 · Belapur–Pendhar · OPERATIONAL</b>");
+    L.polyline(pathMetro8,{color:'#f59e0b',weight:4.5,dashArray:'6,4',opacity:1}).addTo(map3).bindPopup("<b>Metro Line 8 · BKC to NMIA · UNDER CONSTRUCTION · 35.1 km</b>");
+    addLabel(map3,[18.960,72.990],"Metro L8 BKC–NMIA","#f59e0b");
+    L.polyline([[18.940,72.835],[18.980,72.870],[19.050,72.960],[19.120,73.000],[19.180,73.010],[19.240,73.130]],{color:'#744210',weight:4,dashArray:'12,4',opacity:0.9}).addTo(map3).bindPopup("<b>Central Railway · Mumbai CST–Kalyan · OPERATIONAL</b>");
+    addLabel(map3,[19.080,72.980],"Central Rly","#744210");
+    L.polyline([[18.948,73.007],[18.895,72.946],[18.878,72.943]],{color:'#16a34a',weight:4.5,opacity:1}).addTo(map3).bindPopup("<b>Uran–Belapur Rail · OPERATIONAL · 26 km</b>");
+    L.polyline([[18.989,73.114],[18.960,73.142],[18.941,73.190]],{color:'#ea580c',weight:3.5,dashArray:'8,5',opacity:0.9}).addTo(map3).bindPopup("<b>Panvel–Karjat Double Track · UNDER CONSTRUCTION</b>");
+    L.polyline(pathDfc,{color:'#7c3aed',weight:3.5,dashArray:'10,5',opacity:0.85}).addTo(map3).bindPopup("<b>Panvel–Uran DFC · PLANNED</b>");
+    L.polyline(pathKonkanRail,{color:'#92400e',weight:4.5,opacity:0.95}).addTo(map3).bindPopup("<b>Konkan Railway · OPERATIONAL</b>");
+addLabel(map3,[18.700,72.870],"Konkan Rly","#92400e");
+L.polyline(pathMumbaiGoa,{color:'#2563eb',weight:4,dashArray:'3,6',opacity:0.90}).addTo(map3).bindPopup("<b>Mumbai–Goa Expressway NH-66 · PLANNED</b>");
+addLabel(map3,[18.660,73.080],"NH-66 Goa Exp.","#2563eb");
+    addNode(map3,[18.953,73.065],'#0284c7',"<b>✈️ NMIA</b><br>Under Construction",14);
+    addNode(map3,[18.950,72.950],'#0ea5e9',"<b>⚓ JNPT Port</b><br>Operational",13);
+    addNode(map3,[18.990,73.115],'#22d3ee',"<b>🚇 Panvel Hub</b>",12);
+    addNode(map3,[19.000,73.020],'#2563eb',"<b>🚇 Navi Mumbai CBD</b>",11);
+    addNode(map3,[18.940,72.835],'#1a1a2e',"<b>🏙️ Core Mumbai</b>",12);
+    addNode(map3,[19.220,72.975],'#d69e2e',"<b>🏙️ Thane</b>",10);
+    addNode(map3,[19.280,73.060],'#16a34a',"<b>🏭 Bhiwandi</b>",10);
+    addNode(map3,[19.240,73.130],'#9f7aea',"<b>🏘️ Kalyan</b>",9);
+    addNode(map3,[19.380,72.840],'#ed8936',"<b>🚉 Virar</b>",9);
+    addNode(map3,[18.641,72.875],'#16a34a',"<b>⛵ Alibaug</b>",9);
+    ['CORE\nMUMBAI','THANE','BHIWANDI','KALYAN','VIRAR','VASAI','ALIBAUG','NAVI\nMUMBAI','PANVEL','RAIGAD'].forEach((name,i) => {
+        const positions = [[18.940,72.800],[19.220,72.940],[19.295,73.070],[19.250,73.155],[19.380,72.800],[19.370,72.835],[18.641,72.840],[19.060,73.015],[18.995,73.115],[18.640,72.780]];
+        addCityLabel(map3, positions[i], name);
+    });
+} 
+
+function addLabel(m,ll,text,color){L.marker(ll,{icon:L.divIcon({className:'',html:`<div style="background:${color};color:#fff;font-size:0.55rem;font-weight:800;font-family:'Barlow Condensed',sans-serif;padding:2px 5px;border-radius:3px;white-space:nowrap;box-shadow:0 1px 3px rgba(0,0,0,0.3);opacity:0.92;">${text}</div>`,iconAnchor:[0,0]})}).addTo(m);}
+function addNode(m,ll,color,popup,r){L.circleMarker(ll,{radius:r||9,color:'#fff',fillColor:color,fillOpacity:1,weight:2.5}).bindPopup(popup).addTo(m);}
+function addCityLabel(m,ll,text){L.marker(ll,{icon:L.divIcon({className:'',html:`<div style="color:#1a1a2e;font-size:0.60rem;font-weight:800;font-family:'Barlow Condensed',sans-serif;letter-spacing:0.5px;white-space:pre;text-align:center;text-shadow:1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;">${text}</div>`,iconAnchor:[20,8]})}).addTo(m);}
+function focusNetwork2(ll,z){if(map2) map2.setView(ll,z,{animate:true,duration:1});}
+
+window.onload = initMap;
+</script>
+</body>
+</html>
